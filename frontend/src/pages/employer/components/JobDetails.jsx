@@ -11,7 +11,7 @@ const JobDetails = () => {
   const { loading } = useSelector((store) => store.job);
 
   useEffect(() => {
-    document.title = `${jobDetails?.title} | ITConnect`;
+    document.title = `${jobDetails?.title} | JobGrids`;
   }, [jobDetails]);
 
   if (!jobDetails) {

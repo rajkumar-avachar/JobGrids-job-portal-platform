@@ -16,7 +16,7 @@ const Login = () => {
   });
 
   useEffect(() => {
-    document.title = "Log in | ITConnect";
+    document.title = "Log in | JobGrids";
   }, []);
 
   const handleInputChange = (e) => {

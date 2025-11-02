@@ -16,7 +16,7 @@ import EditJob from "./components/EditJob";
 
 const Dashboard = () => {
   useEffect(() => {
-    document.title = "Employer Dashboard | ITConnect";
+    document.title = "Employer Dashboard | JobGrids";
   }, []);
   return (
     <div className="d-flex">

@@ -58,7 +58,7 @@ const Dashboard = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    document.title = "JobSeeker Dashboard | Job Portal";
+    document.title = "JobSeeker Dashboard | JobGrids";
   }, []);
 
   const renderStatus = (status) => {

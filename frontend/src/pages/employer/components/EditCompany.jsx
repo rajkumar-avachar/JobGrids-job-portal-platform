@@ -26,6 +26,10 @@ const EditCompany = () => {
 
   const { loading } = useSelector((store) => store.company);
 
+   useEffect(() => {
+      document.title = "Edit Company | JobGrids";
+    }, []);
+
   useEffect(() => {
     if (!user?.company) {
       navigate("/employer/company/setup", { replace: true });

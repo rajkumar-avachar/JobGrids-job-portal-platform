@@ -31,7 +31,7 @@ const EditJob = () => {
   });
 
   useEffect(() => {
-    document.title = "Edit Job | ITConnect";
+    document.title = "Edit Job | JobGrids";
   }, []);
 
   useEffect(() => {

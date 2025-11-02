@@ -16,7 +16,7 @@ const Homepage = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    document.title = "Home | ITConnect";
+    document.title = "Home | JobGrids";
   }, []);
 
   useJobs();

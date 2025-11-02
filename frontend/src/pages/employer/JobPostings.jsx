@@ -16,7 +16,7 @@ const JobPostings = () => {
   const { employerJobs, loading } = useSelector((store) => store.job);
 
   useEffect(() => {
-    document.title = "Job Postings | ITConnect";
+    document.title = "Job Postings | JobGrids";
   }, [employerJobs]);
 
   if (loading) {

@@ -26,6 +26,10 @@ const PostJob = () => {
     skills: "",
   });
 
+  useEffect(() => {
+    document.title = "Post a Job | JobGrids";
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });

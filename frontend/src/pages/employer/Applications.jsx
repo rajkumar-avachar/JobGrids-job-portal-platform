@@ -35,7 +35,7 @@ const Applications = () => {
   const [positionFilter, setPositionFilter] = useState("all");
 
    useEffect(() => {
-    document.title = "Applications | ITConnect";
+    document.title = "Applications | JobGrids";
   }, [applications]);
 
   const filteredApplications = applications?.filter((application) => {

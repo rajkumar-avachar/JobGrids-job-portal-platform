@@ -25,7 +25,7 @@ const CompanyProfile = () => {
   const [company, setCompany] = useState(null);
 
    useEffect(() => {
-    document.title = `${company?.name} | ITConnect`;
+    document.title = `${company?.name} | JobGrids`;
   }, [company]);
 
   useEffect(() => {

@@ -21,7 +21,7 @@ const Signup = () => {
   const [role, setRole] = useState("jobseeker");
 
   useEffect(() => {
-    document.title = "Sign up | ITConnect";
+    document.title = "Sign up | JobGrids";
   }, []);
 
   const handleInputChange = (e) => {

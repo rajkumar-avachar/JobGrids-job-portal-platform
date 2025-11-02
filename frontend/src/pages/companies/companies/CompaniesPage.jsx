@@ -9,7 +9,7 @@ const CompaniesPage = () => {
   const { loading } = useSelector((store) => store.company);
 
   useEffect(() => {
-    document.title = "Companies | ITConnect";
+    document.title = "Companies | JobGrids";
   }, []);
 
   if (loading) {

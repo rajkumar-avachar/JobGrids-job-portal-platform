@@ -5,6 +5,11 @@ import { useSelector } from "react-redux";
 
 const CompanySetup = () => {
   const { user } = useSelector((store) => store.auth);
+
+  useEffect(() => {
+    document.title = "Company Setup | JobGrids";
+  }, []);
+
   const navigate = useNavigate();
   useEffect(() => {
     if (user?.role !== "employer") {

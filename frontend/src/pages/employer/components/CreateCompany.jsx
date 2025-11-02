@@ -20,6 +20,10 @@ const CreateCompany = () => {
     website: "",
   });
 
+  useEffect(() => {
+    document.title = "Create Company | JobGrids";
+  }, []);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.auth);
@@ -61,7 +65,7 @@ const CreateCompany = () => {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
-      
+
       if (res.data.success) {
         dispatch(setUser({ ...user, company: res.data.company }));
         console.log("Company created successfully:", res.data.company);
