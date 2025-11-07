@@ -50,7 +50,7 @@ const Footer = () => {
 
       <hr className="my-4 mx-sm-5" />
       <p className="text-center mt-4 fs-14">
-        &copy; 2025 ITConnect. All rights reserved.
+        &copy; 2025 JobGrids. All rights reserved.
       </p>
     </footer>
   );
