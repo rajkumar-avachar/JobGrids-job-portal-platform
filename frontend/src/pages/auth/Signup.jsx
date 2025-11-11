@@ -115,7 +115,7 @@ const Signup = () => {
                     className="form-control ps-5 py-2"
                     id="fullname"
                     name="fullname"
-                    placeholder="Raj Kumar"
+                    placeholder="Full Name"
                     onChange={handleInputChange}
                   />
                 </div>
