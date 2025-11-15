@@ -53,8 +53,7 @@ const Navbar = () => {
             to="/"
             onClick={closeMobileDrawer}
           >
-            <img src="/logo/jobgridslogo1.png" alt="Logo"/>
-            
+            <img src="/logo/jobgridslogo1.png" alt="Logo" />
           </Link>
 
           <button
@@ -153,11 +152,11 @@ const Navbar = () => {
               )}
 
               <p className="fw-bold fs-4 text-black mt-3 mb-1">
-                Rajkumar Avachar
+                {user?.fullname}
               </p>
-              <p className="fs-14 mb-2 text-black">Full Stack Web Developer</p>
+              <p className="fs-14 mb-2 text-black">{user?.profile?.headline}</p>
               <p className="text-muted fs-14 mb-0">
-                Jalgaon, Maharashtra, India
+                {user?.profile?.location}
               </p>
             </div>
           </Link>
