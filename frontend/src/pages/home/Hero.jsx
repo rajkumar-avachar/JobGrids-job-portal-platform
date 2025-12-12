@@ -17,7 +17,7 @@ const Hero = () => {
             <span className="text-primary">Tech Careers</span>
           </h1>
           <h6 className="text-muted my-md-4">
-            Discover jobs & internships for freshers and professionals.
+            Discover jobs & internships for freshers and working professionals.
           </h6>
           <Link to="/jobs" className="text-decoration-none">
             <button className="btn bg-blue fw-medium py-2 mt-3 mt-md-0">
