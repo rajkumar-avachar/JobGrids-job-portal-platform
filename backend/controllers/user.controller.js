@@ -109,7 +109,7 @@ export const login = async (req, res) => {
     }
     const isPasswordMatch = await bcrypt.compare(
       cleaned.password,
-      user.password
+      user.password,
     );
     if (!isPasswordMatch) {
       return res.status(400).json({
@@ -124,7 +124,7 @@ export const login = async (req, res) => {
     };
 
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+      expiresIn: "5m",
     });
 
     const userData = {
@@ -143,7 +143,7 @@ export const login = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 1 * 60 * 60 * 1000,
+        maxAge: 5 * 60 * 1000,
       })
       .json({
         message: `Welcome back ${user.fullname}`,
@@ -345,7 +345,7 @@ export const updateProfile = async (req, res) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
     if (!updatedUser) {
       return res.status(404).json({

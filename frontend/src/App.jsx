@@ -23,6 +23,11 @@ import PageNotFound from "./components/PageNotFound";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { USER_API } from "./utils/apis";
+import { useDispatch } from "react-redux";
+import { logout, setUser } from "./redux/authSlice";
+import axios from "axios";
 
 // Layouts
 function MainLayout() {
@@ -37,6 +42,24 @@ function MainLayout() {
 
 // App
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await axios.get(`${USER_API}/me`, {
+          withCredentials: true,
+        });
+
+        dispatch(setUser(res.data.user));
+      } catch (error) {
+        if (error.response?.status === 401) {
+          dispatch(logout());
+        }
+      }
+    };
+    checkAuth();
+  }, [dispatch]);
   return (
     <Router>
       <ScrollToTop />
