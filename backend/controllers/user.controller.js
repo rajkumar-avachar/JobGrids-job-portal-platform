@@ -124,7 +124,7 @@ export const login = async (req, res) => {
     };
 
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
-      expiresIn: "5m",
+      expiresIn: "15d",
     });
 
     const userData = {
@@ -143,7 +143,7 @@ export const login = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 5 * 60 * 1000,
+        maxAge: 15 * 24 * 60 * 60 * 1000,
       })
       .json({
         message: `Welcome back ${user.fullname}`,
