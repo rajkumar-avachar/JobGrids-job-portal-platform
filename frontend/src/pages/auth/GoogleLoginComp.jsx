@@ -45,7 +45,7 @@ const GoogleLoginComp = () => {
     }
   };
   return (
-    <div className="w-full">
+    <div className="w-100">
       <GoogleLogin
         onSuccess={(credentialResponse) => handleSuccess(credentialResponse)}
         onError={() => {
