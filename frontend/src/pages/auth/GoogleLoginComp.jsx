@@ -45,7 +45,7 @@ const GoogleLoginComp = () => {
     }
   };
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       <GoogleLogin
         onSuccess={(credentialResponse) => handleSuccess(credentialResponse)}
         onError={() => {
