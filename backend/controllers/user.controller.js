@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
+import { OAuth2Client } from "google-auth-library";
 
 //Register User
 export const register = async (req, res) => {
@@ -11,7 +12,7 @@ export const register = async (req, res) => {
 
     const cleaned = {
       fullname: fullname?.trim().replace(/\s+/g, " "),
-      email: email?.trim(),
+      email: email?.trim().toLowerCase(),
       password: password?.trim(),
       role: role?.trim().replace(/\s+/g, "").toLowerCase(),
     };
@@ -62,11 +63,79 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
+    const userData = {
+      _id: user._id,
+      fullname: user.fullname,
+      email: user.email,
+      role: user.role,
+    };
+
     return res.status(201).json({
       message: "Account created successfully",
-      user,
+      user: userData,
       success: true,
     });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+//Login with Google
+export const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    const { sub, name, email, picture } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        googleId: sub,
+        fullname: name,
+        email,
+        role: "jobseeker",
+        profile: {
+          profilePhoto: picture,
+        },
+      });
+    } else if (!user.googleId) {
+      user.googleId = sub;
+      await user.save();
+    }
+    const tokenData = {
+      userId: user._id,
+      role: user.role,
+    };
+
+    const jwttoken = jwt.sign(tokenData, process.env.JWT_SECRET, {
+      expiresIn: "5m",
+    });
+
+    return res
+      .status(200)
+      .cookie("token", jwttoken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 5 * 60 * 1000,
+      })
+      .json({
+        message: `Welcome back ${user.fullname}`,
+        user,
+        success: true,
+      });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -124,7 +193,7 @@ export const login = async (req, res) => {
     };
 
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
-      expiresIn: "15d",
+      expiresIn: "5m",
     });
 
     const userData = {
@@ -143,7 +212,7 @@ export const login = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 15 * 24 * 60 * 60 * 1000,
+        maxAge: 5 * 60 * 1000,
       })
       .json({
         message: `Welcome back ${user.fullname}`,

@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    googleId: {
+      type: String,
+    },
     fullname: {
       type: String,
       required: true,
@@ -14,7 +17,6 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
       minlength: [6, "Password must be at least 6 characters"],
     },
     role: {
@@ -60,7 +62,7 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const User = mongoose.model("User", userSchema);

@@ -2,6 +2,7 @@ import express from "express";
 import {
   register,
   login,
+  googleLogin,
   logout,
   updateProfile,
 } from "../controllers/user.controller.js";
@@ -15,12 +16,13 @@ router.route("/register").post(register);
 
 router.route("/login").post(login);
 
+router.route("/google-login").post(googleLogin);
+
 router.route("/logout").get(logout);
 
 router
   .route("/updateProfile")
   .put(isAuthenticated, profileResumeUpload, updateProfile);
-
 
 router.get("/me", isAuthenticated, async (req, res) => {
   try {

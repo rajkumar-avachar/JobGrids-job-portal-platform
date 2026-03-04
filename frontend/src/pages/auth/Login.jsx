@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setLoading, setUser } from "../../redux/authSlice";
 import "./style.css";
 import { Mail, Lock, ArrowRight, LogIn } from "lucide-react";
+import GoogleLoginComp from "./GoogleLoginComp";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -120,7 +121,7 @@ const Login = () => {
               </div>
               {loading ? (
                 <button
-                  className="btn bg-blue w-100 mx-auto mt-3 fs-14"
+                  className="btn bg-blue w-100 mx-auto mt-3 mb-4 fs-14"
                   disabled
                 >
                   <span
@@ -131,10 +132,11 @@ const Login = () => {
                   Please wait...
                 </button>
               ) : (
-                <button className="btn bg-blue w-100 mx-auto mt-3 fs-14">
+                <button className="btn bg-blue w-100 mx-auto mt-3 mb-4 fs-14">
                   Log in <ArrowRight size={16} />
                 </button>
               )}
+              <GoogleLoginComp/>
             </form>
           </div>
         </div>

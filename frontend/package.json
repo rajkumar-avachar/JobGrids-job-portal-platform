@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.0.1",
     "@mui/material": "^7.0.1",
+    "@react-oauth/google": "^0.13.4",
     "@reduxjs/toolkit": "^2.6.1",
     "@toolpad/core": "^0.13.0",
     "axios": "^1.8.4",

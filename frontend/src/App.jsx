@@ -60,6 +60,7 @@ function App() {
     };
     checkAuth();
   }, [dispatch]);
+
   return (
     <Router>
       <ScrollToTop />

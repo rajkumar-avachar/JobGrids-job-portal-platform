@@ -17,7 +17,7 @@ export const isAuthenticated = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    return res.status(403).json({
+    return res.status(401).json({
       message: "Invalid or expired token",
       success: false,
     });
@@ -25,7 +25,7 @@ export const isAuthenticated = async (req, res, next) => {
 };
 
 export const isEmployer = (req, res, next) => {
-  if (req.user.role !== "employer") {
+  if (!req.user || req.user.role !== "employer") {
     return res.status(403).json({
       message: "Unauthorized Access",
       success: false,
@@ -35,7 +35,7 @@ export const isEmployer = (req, res, next) => {
 };
 
 export const isJobseeker = (req, res, next) => {
-  if (req.user.role !== "jobseeker") {
+  if (!req.user || req.user.role !== "jobseeker") {
     return res.status(403).json({
       message: "Unauthorized Access",
       success: false,

@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setLoading } from "../../redux/authSlice";
 import { UserPlus, Mail, Lock, User, Building, ArrowRight } from "lucide-react";
 import "./style.css";
+import GoogleLoginComp from "./GoogleLoginComp";
 
 const Signup = () => {
   const [input, setInput] = useState({
@@ -187,7 +188,7 @@ const Signup = () => {
                 <p className="text-danger">Password didn't match</p>
               )}
               {loading ? (
-                <button className="btn bg-blue w-100 mt-3 fs-14 py-2" disabled>
+                <button className="btn bg-blue w-100 mt-3 mb-4 fs-14 py-2" disabled>
                   <span
                     className="spinner-border spinner-border-sm me-2"
                     role="status"
@@ -196,10 +197,12 @@ const Signup = () => {
                   Please wait...
                 </button>
               ) : (
-                <button className="btn bg-blue w-100 mt-3 fs-14 py-2">
+                <button className="btn bg-blue w-100 mt-3 mb-4 fs-14 py-2">
                   Create Account <ArrowRight size={16} />
                 </button>
               )}
+
+              <GoogleLoginComp/>
             </form>
           </div>
         </div>
