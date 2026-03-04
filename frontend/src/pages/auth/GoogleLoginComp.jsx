@@ -57,10 +57,7 @@ const GoogleLoginComp = () => {
       <GoogleLogin
         onSuccess={handleSuccess}
         onError={() => console.log("Login Failed")}
-        width={320}
         size="large"
-        theme="outline"
-        shape="rectangular"
       />
     </div>
   );
