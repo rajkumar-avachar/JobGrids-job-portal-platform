@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { setUser } from "../../redux/authSlice";
 import { useDispatch } from "react-redux";
-import "./style.css";
 
 const GoogleLoginComp = () => {
   const navigate = useNavigate();
@@ -46,28 +45,12 @@ const GoogleLoginComp = () => {
     }
   };
   return (
-    // <div>
-    //   <GoogleLogin
-    //     onSuccess={(credentialResponse) => handleSuccess(credentialResponse)}
-    //     onError={() => {
-    //       console.log("Login Failed");
-    //     }}
-    //   />
-    // </div>
-    // <div className="w-100 d-flex justify-content-center">
-    //   <GoogleLogin
-    //     onSuccess={handleSuccess}
-    //     onError={() => console.log("Login Failed")}
-    //     theme="outline"
-    //     text="continue_with"
-    //   />
-    // </div>
-    <div className="google-btn-container">
+    <div>
       <GoogleLogin
-        onSuccess={handleSuccess}
-        onError={() => console.log("Login Failed")}
-        theme="outline"
-        size="large"
+        onSuccess={(credentialResponse) => handleSuccess(credentialResponse)}
+        onError={() => {
+          console.log("Login Failed");
+        }}
         text="continue_with"
       />
     </div>
