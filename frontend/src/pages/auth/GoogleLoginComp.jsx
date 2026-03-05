@@ -52,7 +52,7 @@ const GoogleLoginComp = () => {
           console.log("Login Failed");
         }}
         text="continue_with"
-        useOneTap={false}
+        prompt="select_account"
       />
     </div>
   );
