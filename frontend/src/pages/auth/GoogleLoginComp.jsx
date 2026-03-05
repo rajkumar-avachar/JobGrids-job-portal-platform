@@ -45,13 +45,14 @@ const GoogleLoginComp = () => {
     }
   };
   return (
-    <div className="w-100">
+    <div className="w-100 border border-black border-1">
       <GoogleLogin
         onSuccess={(credentialResponse) => handleSuccess(credentialResponse)}
         onError={() => {
           console.log("Login Failed");
         }}
         text="continue_with"
+        size="large"
       />
     </div>
   );
