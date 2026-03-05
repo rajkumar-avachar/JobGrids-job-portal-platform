@@ -45,19 +45,14 @@ const GoogleLoginComp = () => {
     }
   };
   return (
-    // <div>
-    //   <GoogleLogin
-    //     onSuccess={(credentialResponse) => handleSuccess(credentialResponse)}
-    //     onError={() => {
-    //       console.log("Login Failed");
-    //     }}
-    //   />
-    // </div>
-    <div className="w-100 d-flex justify-content-center">
+    <div>
       <GoogleLogin
-        onSuccess={handleSuccess}
-        onError={() => console.log("Login Failed")}
-        size="large"
+        onSuccess={(credentialResponse) => handleSuccess(credentialResponse)}
+        onError={() => {
+          console.log("Login Failed");
+        }}
+        text="continue_with"
+        useOneTap={false}
       />
     </div>
   );
