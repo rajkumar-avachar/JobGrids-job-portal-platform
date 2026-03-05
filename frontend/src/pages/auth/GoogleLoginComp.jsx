@@ -45,14 +45,13 @@ const GoogleLoginComp = () => {
     }
   };
   return (
-    <div>
+    <div className="w-100">
       <GoogleLogin
         onSuccess={(credentialResponse) => handleSuccess(credentialResponse)}
         onError={() => {
           console.log("Login Failed");
         }}
         text="continue_with"
-        prompt="select_account"
       />
     </div>
   );

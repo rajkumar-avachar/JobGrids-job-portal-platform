@@ -136,7 +136,8 @@ const Login = () => {
                   Log in <ArrowRight size={16} />
                 </button>
               )}
-              <GoogleLoginComp/>
+
+              <GoogleLoginComp />
             </form>
           </div>
         </div>
