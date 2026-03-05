@@ -24,3 +24,18 @@
 ::placeholder, .icon {
   color: #9b9a9a !important;
 }
+
+
+.google-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.google-btn-container > div {
+  width: 100% !important;
+}
+
+.google-btn-container iframe {
+  width: 100% !important;
+}
