@@ -7,6 +7,9 @@ import {
   googleLogin,
   logout,
   updateProfile,
+  sendOtpForForgotPassword,
+  verifyEmailForResetPassword,
+  resetPassword,
 } from "../controllers/user.controller.js";
 import { isAuthenticated } from "../middlewares/authMiddleware.js";
 import { profileResumeUpload } from "../utils/upload.js";
@@ -23,6 +26,14 @@ router.route("/resend-otp").post(resendOtp);
 router.route("/login").post(login);
 
 router.route("/google-login").post(googleLogin);
+
+router.route("/forgot-password").post(sendOtpForForgotPassword);
+
+router
+  .route("/verify-email-for-reset-password")
+  .post(verifyEmailForResetPassword);
+
+router.route("/reset-password").post(resetPassword);
 
 router.route("/logout").get(logout);
 

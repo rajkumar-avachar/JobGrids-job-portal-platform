@@ -220,6 +220,14 @@ export const login = async (req, res) => {
       });
     }
 
+    if (user.googleId && !user.password) {
+      return res.status(400).json({
+        message:
+          "This account was created using Google. Please continue with Google or reset your password.",
+        success: false,
+      });
+    }
+
     if (!user.isVerified) {
       return res.status(403).json({
         message: "Please verify your email before logging in",
@@ -334,6 +342,150 @@ export const googleLogin = async (req, res) => {
       });
   } catch (error) {
     console.error("Outh Google Login Error:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+//Email OTP for Forgot Password
+export const sendOtpForForgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+        success: false,
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        message: "Invalid email format",
+        success: false,
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    await generateAndSendOtp(user);
+    return res.status(200).json({
+      message: "OTP sent to email successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+//Verify Email for Forgot Password
+export const verifyEmailForResetPassword = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({
+        message: "Email and OTP are required",
+        success: false,
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+        success: false,
+      });
+    }
+
+    if (user.otpExpires < new Date()) {
+      return res.status(400).json({
+        message: "OTP has expired",
+        success: false,
+      });
+    }
+
+    user.otp = null;
+    user.otpExpires = null;
+    await user.save();
+
+    return res.status(200).json({
+      message: "OTP verified successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Verify Email for Forgot Password Error:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+//Reset Password
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) {
+      return res.status(400).json({
+        message: "Email and new password are required",
+        success: false,
+      });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        message: "Invalid email format",
+        success: false,
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters",
+        success: false,
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password reset successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Reset Password Error:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
