@@ -391,7 +391,7 @@ export const sendOtpForForgotPassword = async (req, res) => {
   }
 };
 
-//Verify Email for Forgot Password
+//Verify Email for Reset Password
 export const verifyEmailForResetPassword = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -426,6 +426,7 @@ export const verifyEmailForResetPassword = async (req, res) => {
 
     user.otp = null;
     user.otpExpires = null;
+    user.passwordResetVerified = true;
     await user.save();
 
     return res.status(200).json({
@@ -476,8 +477,16 @@ export const resetPassword = async (req, res) => {
       });
     }
 
+    if (!user.passwordResetVerified) {
+      return res.status(403).json({
+        message: "OTP verification required",
+        success: false,
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
+    user.passwordResetVerified = false;
     await user.save();
 
     return res.status(200).json({

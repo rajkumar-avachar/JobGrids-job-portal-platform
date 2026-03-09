@@ -73,6 +73,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    passwordResetVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
