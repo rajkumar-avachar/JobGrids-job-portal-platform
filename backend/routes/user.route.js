@@ -1,6 +1,8 @@
 import express from "express";
 import {
   register,
+  verifyEmail,
+  resendOtp,
   login,
   googleLogin,
   logout,
@@ -13,6 +15,10 @@ import { User } from "../model/user.model.js";
 const router = express.Router();
 
 router.route("/register").post(register);
+
+router.route("/verify-email").post(verifyEmail);
+
+router.route("/resend-otp").post(resendOtp);
 
 router.route("/login").post(login);
 

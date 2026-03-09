@@ -61,6 +61,18 @@ const userSchema = new mongoose.Schema(
       ref: "Company",
       default: null,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: String,
+      default: null,
+    },
+    otpExpires: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true },
 );

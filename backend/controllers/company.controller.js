@@ -83,7 +83,7 @@ export const createCompany = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error creating company:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -109,7 +109,7 @@ export const getAllCompanies = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching all companies:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -141,7 +141,7 @@ export const getCompanyById = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching company by ID:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -154,7 +154,7 @@ export const getCompanyByEmployer = async (req, res) => {
   try {
     const employerId = req.user.userId;
     const company = await Company.findOne({ employer: employerId }).populate(
-      "jobs"
+      "jobs",
     );
     if (!company) {
       return res.status(200).json({
@@ -168,7 +168,7 @@ export const getCompanyByEmployer = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching employer company:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -305,7 +305,7 @@ export const updateCompany = async (req, res) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
 
     return res.status(200).json({
@@ -314,7 +314,7 @@ export const updateCompany = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error updating company:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -360,7 +360,7 @@ export const deleteCompany = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting company:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,

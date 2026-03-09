@@ -105,7 +105,7 @@ export const createJob = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error creating job:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -129,7 +129,7 @@ export const getJobs = async (req, res) => {
     }
     return res.status(200).json({ jobs, success: true });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching all jobs:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -161,7 +161,7 @@ export const getJobById = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching job by ID:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -179,7 +179,7 @@ export const getJobsByEmployer = async (req, res) => {
 
     return res.status(200).json({ jobs, success: true });
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching jobs posted by employer:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -279,7 +279,7 @@ export const updateJob = async (req, res) => {
     ) {
       return res.status(400).json({
         message: `Invalid Job Type. Valid job types are: ${validJobTypes.join(
-          ", "
+          ", ",
         )}`,
         success: false,
       });
@@ -291,7 +291,7 @@ export const updateJob = async (req, res) => {
     ) {
       return res.status(400).json({
         message: `Invalid Work Mode. Valid work modes are: ${validWorkModes.join(
-          ", "
+          ", ",
         )}`,
         success: false,
       });
@@ -303,7 +303,7 @@ export const updateJob = async (req, res) => {
       {
         new: true,
         runValidators: true,
-      }
+      },
     );
 
     return res.status(200).json({
@@ -312,7 +312,7 @@ export const updateJob = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating job:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -350,7 +350,7 @@ export const deleteJob = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting job:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,

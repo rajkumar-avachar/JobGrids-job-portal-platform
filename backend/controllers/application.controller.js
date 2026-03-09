@@ -67,7 +67,7 @@ export const applyJob = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error applying for job:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -96,7 +96,7 @@ export const getApplicationsByApplicant = async (req, res) => {
 
     return res.status(200).json({ applications, success: true });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching applications for applicant:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -127,7 +127,7 @@ export const getApplicationsForEmployer = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching applications for employer:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -180,7 +180,7 @@ export const getApplicationsForSingleJobByEmployer = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching applications for a specific job:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -217,9 +217,8 @@ export const updateApplicationStatus = async (req, res) => {
       });
     }
 
-    const application = await Application.findById(applicationId).populate(
-      "job"
-    );
+    const application =
+      await Application.findById(applicationId).populate("job");
     if (!application) {
       return res.status(404).json({
         message: "Application not found",
@@ -252,7 +251,7 @@ export const updateApplicationStatus = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error updating application status:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -304,7 +303,7 @@ export const cancelApplication = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error cancelling application:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,

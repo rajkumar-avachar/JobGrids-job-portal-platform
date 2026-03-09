@@ -1,9 +1,8 @@
 import { User } from "../model/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
 import { OAuth2Client } from "google-auth-library";
+import { generateAndSendOtp } from "../utils/otpService.js";
 
 //Register User
 export const register = async (req, res) => {
@@ -35,10 +34,20 @@ export const register = async (req, res) => {
     }
 
     const existingUser = await User.findOne({ email: cleaned.email });
+
     if (existingUser) {
-      return res.status(400).json({
-        message: "Email already registered",
-        success: false,
+      if (existingUser.isVerified) {
+        return res.status(400).json({
+          message: "Email already registered",
+          success: false,
+        });
+      }
+
+      await generateAndSendOtp(existingUser);
+
+      return res.status(200).json({
+        message: "OTP resent. Please verify your email.",
+        success: true,
       });
     }
 
@@ -63,6 +72,8 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
+    await generateAndSendOtp(user);
+
     const userData = {
       _id: user._id,
       fullname: user.fullname,
@@ -76,7 +87,7 @@ export const register = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Register Error:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -84,61 +95,93 @@ export const register = async (req, res) => {
   }
 };
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-//Login with Google
-export const googleLogin = async (req, res) => {
+//Verify Email
+export const verifyEmail = async (req, res) => {
   try {
-    const { token } = req.body;
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({
+        message: "Email and OTP are required",
+        success: false,
+      });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({
+        message: "Email is already verified",
+        success: false,
+      });
+    }
+    if (user.otp !== otp) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+        success: false,
+      });
+    }
+
+    if (user.otpExpires < new Date()) {
+      return res.status(400).json({
+        message: "OTP has expired",
+        success: false,
+      });
+    }
+
+    user.isVerified = true;
+    user.otp = null;
+    user.otpExpires = null;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Email verified successfully",
+      success: true,
     });
-    const payload = ticket.getPayload();
+  } catch (error) {
+    console.error("Email Verification Error:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
 
-    const { sub, name, email, picture } = payload;
+//Resend otp
+export const resendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
 
-    let user = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
     if (!user) {
-      user = await User.create({
-        googleId: sub,
-        fullname: name,
-        email,
-        role: "jobseeker",
-        profile: {
-          profilePhoto: picture,
-        },
+      return res.status(400).json({
+        message: "User not found",
+        success: false,
       });
-    } else if (!user.googleId) {
-      user.googleId = sub;
-      await user.save();
     }
-    const tokenData = {
-      userId: user._id,
-      role: user.role,
-    };
 
-    const jwttoken = jwt.sign(tokenData, process.env.JWT_SECRET, {
-      expiresIn: "5m",
-    });
-
-    return res
-      .status(200)
-      .cookie("token", jwttoken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 5 * 60 * 1000,
-      })
-      .json({
-        message: `Welcome back ${user.fullname}`,
-        user,
-        success: true,
+    if (user.isVerified) {
+      return res.status(400).json({
+        message: "Email already verified",
+        success: false,
       });
+    }
+
+    await generateAndSendOtp(user);
+
+    return res.status(200).json({
+      message: "OTP resent successfully",
+      success: true,
+    });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({
+    console.error("Resend OTP Error:", error);
+    res.status(500).json({
       message: "Internal Server Error",
       success: false,
     });
@@ -176,6 +219,14 @@ export const login = async (req, res) => {
         success: false,
       });
     }
+
+    if (!user.isVerified) {
+      return res.status(403).json({
+        message: "Please verify your email before logging in",
+        success: false,
+      });
+    }
+
     const isPasswordMatch = await bcrypt.compare(
       cleaned.password,
       user.password,
@@ -193,7 +244,7 @@ export const login = async (req, res) => {
     };
 
     const token = jwt.sign(tokenData, process.env.JWT_SECRET, {
-      expiresIn: "5m",
+      expiresIn: "15d",
     });
 
     const userData = {
@@ -212,7 +263,7 @@ export const login = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 5 * 60 * 1000,
+        maxAge: 15 * 24 * 60 * 60 * 1000,
       })
       .json({
         message: `Welcome back ${user.fullname}`,
@@ -220,7 +271,69 @@ export const login = async (req, res) => {
         success: true,
       });
   } catch (error) {
-    console.log(error);
+    console.error("Login Error:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+//Login with Google
+export const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+
+    const { sub, name, email, picture } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await User.create({
+        googleId: sub,
+        fullname: name,
+        email,
+        role: "jobseeker",
+        profile: {
+          profilePhoto: picture,
+        },
+        isVerified: true,
+      });
+    } else if (!user.googleId) {
+      user.googleId = sub;
+      await user.save();
+    }
+    const tokenData = {
+      userId: user._id,
+      role: user.role,
+    };
+
+    const jwttoken = jwt.sign(tokenData, process.env.JWT_SECRET, {
+      expiresIn: "15d",
+    });
+
+    return res
+      .status(200)
+      .cookie("token", jwttoken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 15 * 24 * 60 * 60 * 1000,
+      })
+      .json({
+        message: `Welcome back ${user.fullname}`,
+        user,
+        success: true,
+      });
+  } catch (error) {
+    console.error("Outh Google Login Error:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -244,7 +357,7 @@ export const logout = async (req, res) => {
         success: true,
       });
   } catch (error) {
-    console.log(error);
+    console.error("Logout Error:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
@@ -435,7 +548,7 @@ export const updateProfile = async (req, res) => {
         success: false,
       });
     }
-    console.log(error);
+    console.error("Update Profile Error:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,
