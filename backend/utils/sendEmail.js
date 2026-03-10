@@ -1,9 +1,12 @@
-import { transporter } from "./mailer.js";
+// import { transporter } from "./mailer.js";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendVerificationCode = async (email, otp) => {
   try {
-    await transporter.sendMail({
-      from: `"JobGrids" <${process.env.EMAIL}>`,
+    await resend.emails.send({
+      from: `"JobGrids" <onboarding@resend.dev>`,
       to: email,
       subject: "JobGrids | Email Verification OTP",
       html: `<div style="font-family: Arial, sans-serif; background:#f4f6f8; padding:40px 0;">
