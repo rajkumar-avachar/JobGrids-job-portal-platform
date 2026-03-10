@@ -9,6 +9,7 @@ import { setLoading } from "../../redux/authSlice";
 import { UserPlus, Mail, Lock, User, Building, ArrowRight } from "lucide-react";
 import "./style.css";
 import GoogleLoginComp from "./GoogleLoginComp";
+import { Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
   const [input, setInput] = useState({
@@ -18,6 +19,9 @@ const Signup = () => {
     confirmPassword: "",
     role: "jobseeker",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [role, setRole] = useState("jobseeker");
 
@@ -43,11 +47,14 @@ const Signup = () => {
         { ...input, role },
         {
           withCredentials: true,
-        }
+        },
       );
       if (res.data.success) {
-        navigate("/login");
-        toast.success("Registration successful!", {
+        navigate("/otp-verification", {
+          state: { email: input.email },
+          replace: true,
+        });
+        toast.success("Check your email for OTP", {
           position: "bottom-right",
           autoClose: 2000,
         });
@@ -82,7 +89,7 @@ const Signup = () => {
               </Link>
             </p>
           </div>
-          <div className="col-md-8 border col-xl-4 mx-auto p-4 p-lg-5 rounded-3 fs-14 bg-white shadow-sm mt-3">
+          <div className="col-md-8 border border-2 col-xl-4 mx-auto p-4 p-lg-5 rounded-3 fs-14 bg-white shadow-sm mt-3">
             <form onSubmit={handleFormSubmit}>
               <div className="d-flex justify-content-center mb-4 gap-3">
                 <button
@@ -148,19 +155,27 @@ const Signup = () => {
                 <div className="position-relative">
                   <Lock
                     size={20}
-                    className="position-absolute top-50 start-0 ms-3 translate-middle-y icon "
+                    className="position-absolute top-50 start-0 ms-3 translate-middle-y icon"
                     style={{ pointerEvents: "none" }}
                   />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     className="form-control ps-5 py-2"
                     id="password"
                     name="password"
                     placeholder="••••••••"
                     onChange={handleInputChange}
                   />
+                  <span
+                    className="position-absolute top-50 end-0 me-3 translate-middle-y"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                  </span>
                 </div>
               </div>
+
               <div className="mb-3">
                 <label
                   htmlFor="confirmPassword"
@@ -171,24 +186,38 @@ const Signup = () => {
                 <div className="position-relative">
                   <Lock
                     size={20}
-                    className="position-absolute top-50 start-0 ms-3 translate-middle-y icon "
+                    className="position-absolute top-50 start-0 ms-3 translate-middle-y icon"
                     style={{ pointerEvents: "none" }}
                   />
                   <input
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     className="form-control ps-5 py-2"
                     id="confirmPassword"
                     name="confirmPassword"
                     placeholder="••••••••"
                     onChange={handleInputChange}
                   />
+                  <span
+                    className="position-absolute top-50 end-0 me-3 translate-middle-y"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <Eye size={18} />
+                    ) : (
+                      <EyeOff size={18} />
+                    )}
+                  </span>
                 </div>
               </div>
               {input.password !== input.confirmPassword && (
                 <p className="text-danger">Password didn't match</p>
               )}
               {loading ? (
-                <button className="btn bg-blue w-100 mt-3 mb-4 fs-14 py-2" disabled>
+                <button
+                  className="btn bg-blue w-100 mt-3 mb-4 fs-14 py-2"
+                  disabled
+                >
                   <span
                     className="spinner-border spinner-border-sm me-2"
                     role="status"
@@ -202,7 +231,7 @@ const Signup = () => {
                 </button>
               )}
 
-              <GoogleLoginComp/>
+              <GoogleLoginComp />
             </form>
           </div>
         </div>

@@ -28,6 +28,7 @@ import { USER_API } from "./utils/apis";
 import { useDispatch } from "react-redux";
 import { logout, setUser } from "./redux/authSlice";
 import axios from "axios";
+import OtpVerification from "./pages/auth/OtpVerification";
 
 // Layouts
 function MainLayout() {
@@ -74,8 +75,9 @@ function App() {
           <Route path="company/:id" element={<CompanyDetailsPage />} />
         </Route>
 
-        <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
+        <Route path="otp-verification" element={<OtpVerification />} />
+        <Route path="login" element={<Login />} />
 
         {/* Jobseeker Protected Routes */}
         <Route element={<ProtectedRoute allowedRoles={["jobseeker"]} />}>
