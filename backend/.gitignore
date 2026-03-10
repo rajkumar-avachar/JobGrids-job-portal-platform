@@ -1,14 +1,2 @@
 node_modules/
 .env
-
-
-        {/* <select className="form-select bg-light w-auto fs-14">
-          <option value="all">All Positions</option>
-          {[...new Set(applications?.map((app) => app.job?.title))].map(
-            (title, index) => (
-              <option key={index} value={title}>
-                {title}
-              </option>
-            )
-          )}
-        </select> */}
