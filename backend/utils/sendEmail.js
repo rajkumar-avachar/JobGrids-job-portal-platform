@@ -2,10 +2,14 @@ import nodemailer from "nodemailer";
 
 export const sendVerificationCode = async (email, otp) => {
   try {
+    console.log("Attempting to send email to:", email);
+    console.log("Using SMTP Host:", process.env.SMTP_HOST);
+    console.log("Using SMTP Port:", process.env.SMTP_PORT);
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_PORT == 465, // true for 465, false for other ports
+      port: Number(process.env.SMTP_PORT),
+      secure: Number(process.env.SMTP_PORT) === 465, 
       auth: {
         user: process.env.SMTP_MAIL,
         pass: process.env.SMTP_PASSWORD,
@@ -56,6 +60,7 @@ export const sendVerificationCode = async (email, otp) => {
     };
 
     await transporter.sendMail(mailOptions);
+    console.log("Email sent successfully to:", email);
   } catch (error) {
     console.error("Error sending email:", error);
   }
