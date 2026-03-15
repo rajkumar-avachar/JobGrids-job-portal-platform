@@ -1,25 +1,60 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Briefcase, MapPin, Wallet } from "lucide-react";
 import UpdateOutlinedIcon from "@mui/icons-material/UpdateOutlined";
 import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { JOBS_API } from "../../utils/apis.js";
+import { setSavedJobs } from "../../redux/jobSlice.js";
+import { toast } from "react-toastify";
 
 const LatestJobCard = ({ job }) => {
-  const [save, setSave] = useState(false);
+  const { user } = useSelector((store) => store.auth);
+  const { savedJobs } = useSelector((store) => store.job);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSave = (e) => {
+  const isSaved = savedJobs?.some((savedJob) => savedJob._id === job._id);
+
+  const handleSave = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setSave(!save);
+
+    if (!user) {
+      toast.info("Please login to save jobs");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${JOBS_API}/save/${job._id}`,
+        {},
+        { withCredentials: true },
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+        // After toggle, we need to refresh the savedJobs list. 
+        // For simplicity, we'll manually update if it's already in the list or not.
+        if (isSaved) {
+          dispatch(
+            setSavedJobs(savedJobs.filter((item) => item._id !== job._id)),
+          );
+        } else {
+          dispatch(setSavedJobs([...savedJobs, job]));
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling save job:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
   };
+
   return (
     <Link to={`/job/${job._id}`} className="text-decoration-none">
-      <div className="rounded-3 p-3 border hover-shadow-sm latestJobCard  bg-white">
-        {/* <div className=" text-end">
-          <span className="fs-14 bg-light-blue rounded-pill px-1">
-            Internship
-          </span>
-        </div> */}
+      <div className="rounded-3 p-3 border hover-shadow-sm latestJobCard  bg-white h-100">
         <div className="d-flex align-items-center mb-3">
           <img
             src={job.company?.logo}
@@ -29,7 +64,6 @@ const LatestJobCard = ({ job }) => {
           />
           <div>
             <h6 className="mb-1 text-black fw-semibold">{job.title}</h6>
-
             <h6 className="text-muted mb-0 fs-14">{job.company?.name}</h6>
           </div>
         </div>
@@ -44,13 +78,9 @@ const LatestJobCard = ({ job }) => {
           <div className="text-muted d-flex align-items-center ">
             <Wallet size={14} />
             &nbsp;
-            <p className="mb-0">
-              <p className="mb-0">
-                {job.salary === "Not Disclosed"
-                  ? job.salary
-                  : `₹ ${job.salary}`}
-              </p>
-            </p>
+            <div className="mb-0">
+              {job.salary === "Not Disclosed" ? job.salary : `₹ ${job.salary}`}
+            </div>
           </div>
           <div className="text-muted d-flex align-items-center">
             <Briefcase size={14} />
@@ -58,18 +88,22 @@ const LatestJobCard = ({ job }) => {
             <p className="mb-0">{job.experience}</p>
           </div>
         </div>
-        <div className="mt-3 d-flex align-items-center gap-3 fs-12">
+        <div className="mt-auto pt-3 d-flex align-items-center gap-3 fs-12">
           <div className="text-primary e rounded-pill px-1">
             <UpdateOutlinedIcon className="fs-6" />{" "}
             {moment(job.createdAt).fromNow()}
           </div>
-          {/* <p className="mb-0 text-primary bg-light-blue px-1 rounded-pill">Internship</p> */}
 
           <div className="ms-auto px-2">
-            {save === false ? (
-              <i className="bi bi-bookmark fs-5" onClick={handleSave}></i>
-            ) : (
-              <i className="bi bi-bookmark-fill fs-5" onClick={handleSave}></i>
+            {user?.role === "jobseeker" && (
+              isSaved ? (
+                <i
+                  className="bi bi-bookmark-fill fs-5 text-primary"
+                  onClick={handleSave}
+                ></i>
+              ) : (
+                <i className="bi bi-bookmark fs-5" onClick={handleSave}></i>
+              )
             )}
           </div>
         </div>

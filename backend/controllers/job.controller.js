@@ -1,5 +1,6 @@
 import { Job } from "../model/job.model.js";
 import { Company } from "../model/company.model.js";
+import { User } from "../model/user.model.js";
 import mongoose from "mongoose";
 
 //Create Job
@@ -351,6 +352,89 @@ export const deleteJob = async (req, res) => {
     });
   } catch (error) {
     console.error("Error deleting job:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+// Toggle Save Job
+export const toggleSaveJob = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const jobId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(jobId)) {
+      return res.status(400).json({
+        message: "Invalid Job ID",
+        success: false,
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    const isJobSaved = user.savedJobs.some(
+      (savedJobId) => savedJobId.toString() === jobId
+    );
+
+
+    if (isJobSaved) {
+      user.savedJobs = user.savedJobs.filter((id) => id.toString() !== jobId);
+      await user.save();
+      return res.status(200).json({
+        message: "Job removed from saved list",
+        success: true,
+      });
+    } else {
+      user.savedJobs.push(jobId);
+      await user.save();
+      return res.status(200).json({
+        message: "Job saved successfully",
+        success: true,
+      });
+    }
+  } catch (error) {
+    console.error("Error toggling save job:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+// Get Saved Jobs
+export const getSavedJobs = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const user = await User.findById(userId).populate({
+      path: "savedJobs",
+      populate: {
+        path: "company",
+        select: "name logo",
+      },
+      options: { sort: { createdAt: -1 } },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      savedJobs: user.savedJobs,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error fetching saved jobs:", error);
     return res.status(500).json({
       message: "Internal Server Error",
       success: false,

@@ -81,6 +81,18 @@ const Popover = () => {
             Dashboard
           </Link>
         </li>
+        {user?.role === "jobseeker" && (
+          <li>
+            <Link
+              className="dropdown-item d-flex align-items-center gap-2"
+              to="/saved-jobs"
+              onClick={closeNavbar}
+            >
+              <i className="bi bi-bookmark text-black"></i>
+              Saved Jobs
+            </Link>
+          </li>
+        )}
         <li>
           <hr className="dropdown-divider" />
         </li>

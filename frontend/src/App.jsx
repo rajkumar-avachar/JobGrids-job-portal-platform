@@ -32,6 +32,8 @@ import OtpVerification from "./pages/auth/OtpVerification";
 import ForgotPassword from "./pages/auth/ResetPassword/ForgotPassword";
 import OtpVerificationForResetPassword from "./pages/auth/ResetPassword/OtpVerificationForResetPassword";
 import ResetPassword from "./pages/auth/ResetPassword/ResetPassword";
+import SavedJobs from "./pages/jobseeker/SavedJobs";
+import useSavedJobs from "./hooks/useSavedJobs";
 
 // Layouts
 function MainLayout() {
@@ -47,6 +49,7 @@ function MainLayout() {
 // App
 function App() {
   const dispatch = useDispatch();
+  useSavedJobs();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -93,6 +96,7 @@ function App() {
           <Route path="/" element={<MainLayout />}>
             <Route path="profile" element={<ProfilePage />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="saved-jobs" element={<SavedJobs />} />
           </Route>
         </Route>
 

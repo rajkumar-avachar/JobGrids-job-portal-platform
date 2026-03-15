@@ -203,6 +203,21 @@ const Navbar = () => {
                 <i className="bi bi-grid-fill me-2"></i> Dashboard
               </NavLink>
             </li>
+            {user?.role === "jobseeker" && (
+              <li className="nav-item">
+                <NavLink
+                  className={({ isActive }) =>
+                    `nav-link ${isActive ? "active-link" : ""}`
+                  }
+                  to="/saved-jobs"
+                  onClick={() => {
+                    closeMobileDrawer();
+                  }}
+                >
+                  <i className="bi bi-bookmark-fill me-2"></i> Saved Jobs
+                </NavLink>
+              </li>
+            )}
             <li className="nav-item">
               <NavLink
                 className={({ isActive }) =>

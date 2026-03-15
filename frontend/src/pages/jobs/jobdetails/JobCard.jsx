@@ -8,16 +8,16 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { APPLICATION_API, JOBS_API } from "../../../utils/apis";
 import { toast } from "react-toastify";
-import { setJobDetails } from "../../../redux/jobSlice";
+import { setJobDetails, setSavedJobs } from "../../../redux/jobSlice";
 
 const JobCard = ({ job }) => {
   if (!job) return null;
-  const [save, setSave] = useState(false);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((store) => store.auth);
+  const { savedJobs } = useSelector((store) => store.job);
 
+  const isSaved = savedJobs?.some((savedJob) => savedJob._id === job._id);
   const [isApplied, setIsApplied] = useState(false);
 
   useEffect(() => {
@@ -29,10 +29,37 @@ const JobCard = ({ job }) => {
     }
   }, [job, user]);
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setSave(!save);
+
+    if (!user) {
+      toast.info("Please login to save jobs");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `${JOBS_API}/save/${job._id}`,
+        {},
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+        if (isSaved) {
+          dispatch(
+            setSavedJobs(savedJobs.filter((item) => item._id !== job._id))
+          );
+        } else {
+          dispatch(setSavedJobs([...savedJobs, job]));
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling save job:", error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
   };
 
   const data = {
@@ -73,15 +100,20 @@ const JobCard = ({ job }) => {
           <i class="bi bi-arrow-left"></i> Back to Jobs
         </Link>
         <div className="d-flex gap-4 me-3 d-sm-none">
-          {save === false ? (
-            <i class="bi bi-bookmark rounded-3 fs-4" onClick={handleSave}></i>
-          ) : (
-            <i
-              class="bi bi-bookmark-fill rounded-3 fs-4"
-              onClick={handleSave}
-            ></i>
+          {user?.role === "jobseeker" && (
+            isSaved ? (
+              <i
+                className="bi bi-bookmark-fill rounded-3 fs-4 text-primary"
+                onClick={handleSave}
+              ></i>
+            ) : (
+              <i
+                className="bi bi-bookmark rounded-3 fs-4"
+                onClick={handleSave}
+              ></i>
+            )
           )}
-          <i class="bi bi-share rounded-3 fs-4" onClick={handleSave}></i>
+          <i className="bi bi-share rounded-3 fs-4"></i>
         </div>
       </div>
       <div className="shadow-sm rounded-3 p-3 p-sm-4 bg-white border">
@@ -138,17 +170,19 @@ const JobCard = ({ job }) => {
               </span>
             </div>
             <div className="d-flex gap-5  align-items-center flex-grow-1 justify-content-sm-end justify-content-evenly ms-auto">
-              {save === false ? (
+            {user?.role === "jobseeker" && (
+              isSaved ? (
                 <i
-                  class="bi bi-bookmark rounded-3 fs-4 d-none d-sm-block"
+                  className="bi bi-bookmark-fill rounded-3 fs-4 d-none d-sm-block text-primary"
                   onClick={handleSave}
                 ></i>
               ) : (
                 <i
-                  class="bi bi-bookmark-fill rounded-3 fs-4 d-none d-sm-block"
+                  className="bi bi-bookmark rounded-3 fs-4 d-none d-sm-block"
                   onClick={handleSave}
                 ></i>
-              )}
+              )
+            )}
               <i class="bi bi-share fs-5 rounded-3 d-none d-sm-block"></i>
               {isApplied ? (
                 <button className="btn bg-blue fw-semibold px-4 disabled">
