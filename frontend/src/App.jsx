@@ -29,6 +29,9 @@ import { useDispatch } from "react-redux";
 import { logout, setUser } from "./redux/authSlice";
 import axios from "axios";
 import OtpVerification from "./pages/auth/OtpVerification";
+import ForgotPassword from "./pages/auth/ResetPassword/ForgotPassword";
+import OtpVerificationForResetPassword from "./pages/auth/ResetPassword/OtpVerificationForResetPassword";
+import ResetPassword from "./pages/auth/ResetPassword/ResetPassword";
 
 // Layouts
 function MainLayout() {
@@ -78,6 +81,12 @@ function App() {
         <Route path="signup" element={<Signup />} />
         <Route path="otp-verification" element={<OtpVerification />} />
         <Route path="login" element={<Login />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route
+          path="otp-verification-for-reset-password"
+          element={<OtpVerificationForResetPassword />}
+        />
+        <Route path="reset-password" element={<ResetPassword />} />
 
         {/* Jobseeker Protected Routes */}
         <Route element={<ProtectedRoute allowedRoles={["jobseeker"]} />}>

@@ -130,7 +130,7 @@ const Login = () => {
               </div>
               <div className="text-end">
                 <Link
-                  to="forgot-password"
+                  to="/forgot-password"
                   className="text-decoration-none fs-12 fw-medium"
                 >
                   Fogot Password?

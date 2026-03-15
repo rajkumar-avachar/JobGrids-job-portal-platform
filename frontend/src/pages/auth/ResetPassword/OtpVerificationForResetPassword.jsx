@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { USER_API } from "../../utils/apis";
+import { USER_API } from "../../../utils/apis";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { setLoading } from "../../redux/authSlice";
-import "./style.css";
+import { setLoading } from "../../../redux/authSlice";
+import "../style.css";
 import { MailCheck } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
-const OtpVerification = () => {
+const OtpVerificationForResetPassword = () => {
   const [otp, setOtp] = useState("");
 
   useEffect(() => {
-    document.title = "OTP Verification| JobGrids";
+    document.title = "OTP Verification For Reset Password| JobGrids";
   }, []);
 
   const handleOtpChange = (e) => {
@@ -32,7 +32,7 @@ const OtpVerification = () => {
     try {
       dispatch(setLoading(true));
       const res = await axios.post(
-        `${USER_API}/verify-email`,
+        `${USER_API}/verify-otp-for-reset-password`,
         { email, otp },
         {
           withCredentials: true,
@@ -43,7 +43,7 @@ const OtpVerification = () => {
           position: "bottom-right",
           autoClose: 2000,
         });
-        navigate("/login", { replace: true });
+        navigate("/reset-password", { state: { email }, replace: true });
       } else {
         toast.error(res.data.message || "Something went wrong.", {
           position: "bottom-right",
@@ -51,10 +51,13 @@ const OtpVerification = () => {
         });
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Registration failed.", {
-        position: "bottom-right",
-        autoClose: 2000,
-      });
+      toast.error(
+        error.response?.data?.message || "Email verification failed.",
+        {
+          position: "bottom-right",
+          autoClose: 2000,
+        },
+      );
     } finally {
       dispatch(setLoading(false));
     }
@@ -64,7 +67,7 @@ const OtpVerification = () => {
     try {
       const res = await axios.post(
         `${USER_API}/resend-otp`,
-        { email, type: "register" },
+        { email, type: "reset-password" },
         {
           withCredentials: true,
         },
@@ -94,7 +97,7 @@ const OtpVerification = () => {
         <div className="row mx-2">
           <MailCheck className="text-primary" size={48} />
           <div className="text-center">
-            <h3 className="fw-bold mb-0 mt-3">OTP Verfication</h3>
+            <h3 className="fw-bold mb-0 mt-3">Check Your Email</h3>
             <p className="fs-14 mt-2 text-muted">
               Please enter the OTP sent to your registered email.
             </p>
@@ -156,4 +159,4 @@ const OtpVerification = () => {
   );
 };
 
-export default OtpVerification;
+export default OtpVerificationForResetPassword;

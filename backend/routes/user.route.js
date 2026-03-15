@@ -8,7 +8,7 @@ import {
   logout,
   updateProfile,
   sendOtpForForgotPassword,
-  verifyEmailForResetPassword,
+  verifyOtpForResetPassword,
   resetPassword,
 } from "../controllers/user.controller.js";
 import { isAuthenticated } from "../middlewares/authMiddleware.js";
@@ -30,8 +30,8 @@ router.route("/google-login").post(googleLogin);
 router.route("/forgot-password").post(sendOtpForForgotPassword);
 
 router
-  .route("/verify-email-for-reset-password")
-  .post(verifyEmailForResetPassword);
+  .route("/verify-otp-for-reset-password")
+  .post(verifyOtpForResetPassword);
 
 router.route("/reset-password").post(resetPassword);
 

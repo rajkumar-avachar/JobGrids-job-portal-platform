@@ -40,6 +40,14 @@ const Signup = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (input.password !== input.confirmPassword) {
+      toast.error("Passwords do not match", {
+        position: "bottom-right",
+        autoClose: 2000,
+      });
+      return;
+    }
+
     try {
       dispatch(setLoading(true));
       const res = await axios.post(
@@ -164,6 +172,8 @@ const Signup = () => {
                     id="password"
                     name="password"
                     placeholder="••••••••"
+                    minLength={6}
+                    required
                     onChange={handleInputChange}
                   />
                   <span
@@ -195,6 +205,8 @@ const Signup = () => {
                     id="confirmPassword"
                     name="confirmPassword"
                     placeholder="••••••••"
+                     minLength={6}
+                    required
                     onChange={handleInputChange}
                   />
                   <span
@@ -210,9 +222,7 @@ const Signup = () => {
                   </span>
                 </div>
               </div>
-              {input.password !== input.confirmPassword && (
-                <p className="text-danger">Password didn't match</p>
-              )}
+
               {loading ? (
                 <button
                   className="btn bg-blue w-100 mt-3 mb-4 fs-14 py-2"

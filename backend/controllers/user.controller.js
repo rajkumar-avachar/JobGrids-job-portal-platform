@@ -155,7 +155,7 @@ export const verifyEmail = async (req, res) => {
 //Resend otp
 export const resendOtp = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, type } = req.body;
 
     const user = await User.findOne({ email });
 
@@ -166,9 +166,18 @@ export const resendOtp = async (req, res) => {
       });
     }
 
-    if (user.isVerified) {
+    // Registration OTP
+    if (type === "register" && user.isVerified) {
       return res.status(400).json({
         message: "Email already verified",
+        success: false,
+      });
+    }
+
+    // Reset password OTP
+    if (type === "reset-password" && !user.isVerified) {
+      return res.status(400).json({
+        message: "Please verify your email first",
         success: false,
       });
     }
@@ -392,7 +401,7 @@ export const sendOtpForForgotPassword = async (req, res) => {
 };
 
 //Verify Email for Reset Password
-export const verifyEmailForResetPassword = async (req, res) => {
+export const verifyOtpForResetPassword = async (req, res) => {
   try {
     const { email, otp } = req.body;
     if (!email || !otp) {
