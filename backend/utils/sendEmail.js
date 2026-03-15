@@ -1,12 +1,19 @@
-// import { transporter } from "./mailer.js";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from "nodemailer";
 
 export const sendVerificationCode = async (email, otp) => {
   try {
-    await resend.emails.send({
-      from: `"JobGrids" <onboarding@resend.dev>`,
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: process.env.SMTP_PORT == 465, // true for 465, false for other ports
+      auth: {
+        user: process.env.SMTP_MAIL,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: `"JobGrids" <${process.env.SMTP_MAIL}>`,
       to: email,
       subject: "JobGrids | Email Verification OTP",
       html: `<div style="font-family: Arial, sans-serif; background:#f4f6f8; padding:40px 0;">
@@ -46,7 +53,9 @@ export const sendVerificationCode = async (email, otp) => {
             </div>
             </div>
             `,
-    });
+    };
+
+    await transporter.sendMail(mailOptions);
   } catch (error) {
     console.error("Error sending email:", error);
   }
