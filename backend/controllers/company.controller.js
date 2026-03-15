@@ -2,6 +2,66 @@ import mongoose from "mongoose";
 import { Company } from "../model/company.model.js";
 import { Job } from "../model/job.model.js";
 import { User } from "../model/user.model.js";
+import { Application } from "../model/application.model.js";
+
+//Get Dashboard Stats
+export const getDashboardStats = async (req, res) => {
+  try {
+    const employerId = req.user.userId;
+
+    const company = await Company.findOne({ employer: employerId });
+
+    if (!company) {
+      return res.status(200).json({
+        stats: {
+          totalJobs: 0,
+          activeJobs: 0,
+          totalApplications: 0,
+          hiredCandidates: 0,
+        },
+        recentJobs: [],
+        recentApplications: [],
+        success: true,
+      });
+    }
+
+    const companyId = company._id;
+
+    // Aggregate statistics
+    const totalJobs = await Job.countDocuments({ company: companyId });
+    const activeJobs = await Job.countDocuments({ company: companyId, openings: { $gt: 0 } });
+    const totalApplications = await Application.countDocuments({ company: companyId });
+    const hiredCandidates = await Application.countDocuments({ company: companyId, status: "shortlisted" }); // Assuming shortlisted means hired or progressed
+
+    // Fetch recent items
+    const recentJobs = await Job.find({ company: companyId })
+      .sort({ createdAt: -1 })
+      .limit(5);
+
+    const recentApplications = await Application.find({ company: companyId })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("applicant", "fullname profile");
+
+    return res.status(200).json({
+      stats: {
+        totalJobs,
+        activeJobs,
+        totalApplications,
+        hiredCandidates,
+      },
+      recentJobs,
+      recentApplications,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
 
 //Create Company
 export const createCompany = async (req, res) => {

@@ -6,10 +6,15 @@ import {
   getCompanyByEmployer,
   updateCompany,
   deleteCompany,
+  getDashboardStats,
 } from "../controllers/company.controller.js";
 import { isAuthenticated, isEmployer } from "../middlewares/authMiddleware.js";
 import { companyLogoUpload } from "../utils/upload.js";
 const router = express.Router();
+
+router
+  .route("/dashboard-stats")
+  .get(isAuthenticated, isEmployer, getDashboardStats);
 
 router
   .route("/")
