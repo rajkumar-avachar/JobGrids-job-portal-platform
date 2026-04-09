@@ -20,7 +20,9 @@ export const createJob = async (req, res) => {
       title,
       location,
       salary,
+      salaryRange,
       experience,
+      experienceLevel,
       jobType,
       workMode,
       openings,
@@ -36,10 +38,12 @@ export const createJob = async (req, res) => {
         salary && salary.trim().replace(/\s+/g, " ") !== ""
           ? salary.trim().replace(/\s+/g, " ")
           : "Not Disclosed",
+      salaryRange: salaryRange || "",
       experience:
         experience && experience.trim().replace(/\s+/g, " ") !== ""
           ? experience.trim().replace(/\s+/g, " ")
           : "0 years",
+      experienceLevel: experienceLevel || "",
       jobType: jobType?.trim().replace(/\s+/g, ""),
       workMode: workMode?.trim().replace(/\s+/g, ""),
       openings: openings || 1,
@@ -86,7 +90,9 @@ export const createJob = async (req, res) => {
       company: company._id,
       location: cleaned.location,
       salary: cleaned.salary,
+      salaryRange: cleaned.salaryRange,
       experience: cleaned.experience,
+      experienceLevel: cleaned.experienceLevel,
       jobType: cleaned.jobType,
       workMode: cleaned.workMode,
       openings: cleaned.openings,
@@ -117,18 +123,69 @@ export const createJob = async (req, res) => {
 //Get all Jobs
 export const getJobs = async (req, res) => {
   try {
-    const jobs = await Job.find()
+    const keyword = req.query.keyword || "";
+    const location = req.query.location || "";
+    const jobTypes = req.query.jobTypes ? req.query.jobTypes.split(",").filter(Boolean) : [];
+    const experienceLevel = req.query.experience ? req.query.experience.split(",").filter(Boolean) : [];
+    const salaryRange = req.query.salary || "";
+
+    const andQueries = [];
+
+    // Keyword Search
+    if (keyword) {
+      andQueries.push({
+        $or: [
+          { title: { $regex: keyword, $options: "i" } },
+          { description: { $regex: keyword, $options: "i" } },
+          { skills: { $regex: keyword, $options: "i" } },
+        ],
+      });
+    }
+
+    // Location Search
+    if (location) {
+      andQueries.push({ location: { $regex: location, $options: "i" } });
+    }
+
+    // Job Types and Work Mode (Remote handling)
+    if (jobTypes.length > 0) {
+      const typeOrQueries = [];
+      const remoteSelected = jobTypes.includes("Remote");
+      const otherTypes = jobTypes.filter((t) => t !== "Remote");
+
+      if (otherTypes.length > 0) {
+        typeOrQueries.push({ jobType: { $in: otherTypes } });
+      }
+      if (remoteSelected) {
+        typeOrQueries.push({ workMode: "Remote" });
+      }
+
+      if (typeOrQueries.length > 0) {
+        andQueries.push({ $or: typeOrQueries });
+      }
+    }
+
+    // Experience Filter
+    if (experienceLevel.length > 0) {
+      andQueries.push({ experienceLevel: { $in: experienceLevel } });
+    }
+
+    // Salary Filter
+    if (salaryRange) {
+      andQueries.push({ salaryRange: salaryRange });
+    }
+
+    const query = andQueries.length > 0 ? { $and: andQueries } : {};
+
+    const jobs = await Job.find(query)
       .populate("company", "name logo")
       .sort({ createdAt: -1 });
 
-    if (jobs.length === 0) {
-      return res.status(200).json({
-        jobs: [],
-        message: "Jobs not Found",
-        success: true,
-      });
-    }
-    return res.status(200).json({ jobs, success: true });
+    return res.status(200).json({
+      jobs: jobs || [],
+      message: jobs.length === 0 ? "Jobs not Found" : "Jobs fetched successfully",
+      success: true,
+    });
   } catch (error) {
     console.error("Error fetching all jobs:", error);
     return res.status(500).json({

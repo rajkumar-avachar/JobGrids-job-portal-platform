@@ -5,6 +5,10 @@ const companySlice = createSlice({
   initialState: {
     companies: [],
     companyDetails: null,
+    searchedQuery: {
+      keyword: "",
+      location: "",
+    },
     loading: false,
   },
   reducers: {
@@ -14,12 +18,15 @@ const companySlice = createSlice({
     setCompanyDetails: (state, action) => {
       state.companyDetails = action.payload;
     },
+    setSearchedQuery: (state, action) => {
+      state.searchedQuery = action.payload;
+    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
   },
 });
 
-export const { setCompanies, setCompanyDetails, setLoading } =
+export const { setCompanies, setCompanyDetails, setSearchedQuery, setLoading } =
   companySlice.actions;
 export default companySlice.reducer;

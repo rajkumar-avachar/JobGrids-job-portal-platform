@@ -154,12 +154,24 @@ export const createCompany = async (req, res) => {
 //Get all companies
 export const getAllCompanies = async (req, res) => {
   try {
-    const companies = await Company.find()
+    const keyword = req.query.keyword || "";
+    const location = req.query.location || "";
+
+    const query = {
+      $or: [
+        { name: { $regex: keyword, $options: "i" } },
+        { industry: { $regex: keyword, $options: "i" } },
+      ],
+      location: { $regex: location, $options: "i" },
+    };
+
+    const companies = await Company.find(query)
       .populate("jobs")
       .sort({ createdAt: -1 });
 
     if (companies.length === 0) {
       return res.status(200).json({
+        companies: [],
         message: "Companies Not Found",
         success: true,
       });

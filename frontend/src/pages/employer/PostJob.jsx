@@ -17,7 +17,9 @@ const PostJob = () => {
     title: "",
     location: "",
     salary: "",
+    salaryRange: "",
     experience: "",
+    experienceLevel: "",
     jobType: "",
     workMode: "",
     openings: "",
@@ -140,13 +142,32 @@ const PostJob = () => {
             </select>
           </div>
           <div className="mb-4 col-6">
+            <label htmlFor="salaryRange" className="form-label fs-14">
+              Salary Category (for search filters) *
+            </label>
+            <select
+              className="form-select bg-light"
+              id="salaryRange"
+              name="salaryRange"
+              onChange={handleInputChange}
+              value={input.salaryRange}
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Up to 3 LPA">Up to 3 LPA</option>
+              <option value="3 LPA - 5 LPA">3 LPA - 5 LPA</option>
+              <option value="5 LPA - 10 LPA">5 LPA - 10 LPA</option>
+              <option value="Above 10 LPA">Above 10 LPA</option>
+            </select>
+          </div>
+          <div className="mb-4 col-6">
             <label htmlFor="salary" className="form-label fs-14">
-              Salary Range
+              Exact Salary or Details (e.g., 6.5 LPA)
             </label>
             <input
               type="text"
               className="form-control bg-light"
-              placeholder="e.g., 3-5 LPA"
+              placeholder="e.g., 6.5 LPA, Negotiable"
               id="salary"
               name="salary"
               onChange={handleInputChange}
@@ -154,13 +175,33 @@ const PostJob = () => {
             />
           </div>
           <div className="mb-4 col-6">
+            <label htmlFor="experienceLevel" className="form-label fs-14">
+              Experience Category (for filters) *
+            </label>
+            <select
+              className="form-select bg-light"
+              id="experienceLevel"
+              name="experienceLevel"
+              onChange={handleInputChange}
+              value={input.experienceLevel}
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Fresher">Fresher</option>
+              <option value="0-1 year">0-1 year</option>
+              <option value="1-3 years">1-3 years</option>
+              <option value="3-5 years">3-5 years</option>
+              <option value="5+ years">5+ years</option>
+            </select>
+          </div>
+          <div className="mb-4 col-6">
             <label htmlFor="experience" className="form-label fs-14">
-              Experience Required
+              Exact Experience (e.g., 1.5 years)
             </label>
             <input
               type="text"
               className="form-control bg-light"
-              placeholder="e.g., 1-2 years"
+              placeholder="e.g., 1.5 years, 6 months"
               id="experience"
               name="experience"
               onChange={handleInputChange}

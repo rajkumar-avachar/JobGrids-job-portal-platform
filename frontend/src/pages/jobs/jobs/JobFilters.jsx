@@ -1,173 +1,122 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setFilters, resetFilters } from "../../../redux/jobSlice";
 
 const JobFilters = () => {
+  const dispatch = useDispatch();
+  const { filters } = useSelector((store) => store.job);
+
+  const [selectedJobTypes, setSelectedJobTypes] = useState(filters?.jobTypes || []);
+  const [selectedExp, setSelectedExp] = useState(filters?.experience || []);
+  const [selectedSalary, setSelectedSalary] = useState(filters?.salary || "");
+
+  useEffect(() => {
+    setSelectedJobTypes(filters?.jobTypes || []);
+    setSelectedExp(filters?.experience || []);
+    setSelectedSalary(filters?.salary || "");
+  }, [filters]);
+
+  const handleJobTypeChange = (value) => {
+    const updated = selectedJobTypes.includes(value)
+      ? selectedJobTypes.filter((type) => type !== value)
+      : [...selectedJobTypes, value];
+    setSelectedJobTypes(updated);
+  };
+
+  const handleExpChange = (value) => {
+    const updated = selectedExp.includes(value)
+      ? selectedExp.filter((exp) => exp !== value)
+      : [...selectedExp, value];
+    setSelectedExp(updated);
+  };
+
+  const handleApply = () => {
+    dispatch(
+      setFilters({
+        jobTypes: selectedJobTypes,
+        experience: selectedExp,
+        salary: selectedSalary,
+      })
+    );
+  };
+
+  const handleReset = () => {
+    dispatch(resetFilters());
+  };
+
   return (
     <div className="hover-shadow-sm border col-3 p-4 rounded-3 d-none d-lg-block h-100 bg-white ">
       <p className="fw-bold fs-5">Filters</p>
+      
       <div className="mb-3 fs-15">
-        <label className="form-label">Job Type</label>
-        <div className="form-check">
-          <input
-            className="form-check-input border-primary"
-            type="checkbox"
-            id="fulltime"
-            value="Full-time"
-          />
-          <label className="form-check-label text-muted" htmlFor="fulltime">
-            Full-time
-          </label>
-        </div>
-        <div className="form-check">
-          <input
-            className="form-check-input border-primary"
-            type="checkbox"
-            id="parttime"
-            value="Part-time"
-          />
-          <label className="form-check-label text-muted" htmlFor="parttime">
-            Part-time
-          </label>
-        </div>
-        <div className="form-check">
-          <input
-            className="form-check-input  border-primary"
-            type="checkbox"
-            id="remote"
-            value="Remote"
-          />
-          <label className="form-check-label text-muted" htmlFor="remote">
-            Remote
-          </label>
-        </div>
-        <div className="form-check">
-          <input
-            className="form-check-input  border-primary"
-            type="checkbox"
-            id="internship"
-            value="Internship"
-          />
-          <label className="form-check-label text-muted" htmlFor="internship">
-            Internship
-          </label>
-        </div>
+        <label className="form-label fw-semibold">Job Type</label>
+        {["Full-Time", "Part-Time", "Internship", "Remote"].map((type) => (
+          <div className="form-check" key={type}>
+            <input
+              className="form-check-input border-primary"
+              type="checkbox"
+              id={type}
+              value={type}
+              checked={selectedJobTypes.includes(type)}
+              onChange={() => handleJobTypeChange(type)}
+            />
+            <label className="form-check-label text-muted" htmlFor={type}>
+              {type}
+            </label>
+          </div>
+        ))}
       </div>
+
       <div className="mb-3 fs-15">
-        <label className="form-label">Experience Level</label>
-        <div className="form-check">
-          <input
-            className="form-check-input border-primary"
-            type="checkbox"
-            id="fresher"
-            value="fresher"
-          />
-          <label className="form-check-label text-muted" htmlFor="fresher">
-            Fresher
-          </label>
-        </div>
-        <div className="form-check">
-          <input
-            className="form-check-input border-primary"
-            type="checkbox"
-            id="0-1"
-            value="0-1"
-          />
-          <label className="form-check-label text-muted" htmlFor="0-1">
-            0 - 1 year
-          </label>
-        </div>
-        <div className="form-check">
-          <input
-            className="form-check-input border-primary"
-            type="checkbox"
-            id="1-3"
-            value="1-3"
-          />
-          <label className="form-check-label text-muted" htmlFor="1-3">
-            1 - 3 years
-          </label>
-        </div>
-        <div className="form-check">
-          <input
-            className="form-check-input border-primary"
-            type="checkbox"
-            id="3-5"
-            value="3-5"
-          />
-          <label className="form-check-label text-muted" htmlFor="3-5">
-            3 - 5 years
-          </label>
-        </div>
-        <div className="form-check">
-          <input
-            className="form-check-input border-primary"
-            type="checkbox"
-            id="5+"
-            value="5+"
-          />
-          <label className="form-check-label text-muted" htmlFor="5+">
-            5+ years
-          </label>
-        </div>
+        <label className="form-label fw-semibold">Experience Level</label>
+        {["Fresher", "0-1 year", "1-3 years", "3-5 years", "5+ years"].map((exp) => (
+          <div className="form-check" key={exp}>
+            <input
+              className="form-check-input border-primary"
+              type="checkbox"
+              id={exp}
+              value={exp}
+              checked={selectedExp.includes(exp)}
+              onChange={() => handleExpChange(exp)}
+            />
+            <label className="form-check-label text-muted" htmlFor={exp}>
+              {exp}
+            </label>
+          </div>
+        ))}
       </div>
+
       <div className="mb-3 fs-15">
-        <label className="form-label">Salary Range</label>
-        <div class="form-check">
-          <input
-            class="form-check-input border-primary"
-            type="radio"
-            name="exampleRadios"
-            id="exampleRadios1"
-            value="option1"
-          />
-          <label class="form-check-label text-muted" for="exampleRadios1">
-            Up to 3 LPA
-          </label>
-        </div>
-        <div class="form-check">
-          <input
-            class="form-check-input border-primary"
-            type="radio"
-            name="exampleRadios"
-            id="exampleRadios2"
-            value="option2"
-          />
-          <label class="form-check-label text-muted" for="exampleRadios2">
-            3 LPA - 5 LPA
-          </label>
-        </div>
-        <div class="form-check">
-          <input
-            class="form-check-input border-primary"
-            type="radio"
-            name="exampleRadios"
-            id="exampleRadios2"
-            value="option2"
-          />
-          <label class="form-check-label text-muted" for="exampleRadios2">
-            5 LPA - 10 LPA
-          </label>
-        </div>
-        <div class="form-check">
-          <input
-            class="form-check-input border-primary"
-            type="radio"
-            name="exampleRadios"
-            id="exampleRadios2"
-            value="option2"
-          />
-          <label class="form-check-label text-muted" for="exampleRadios2">
-            Above 10 LPA
-          </label>
-        </div>
+        <label className="form-label fw-semibold">Salary Range</label>
+        {["Up to 3 LPA", "3 LPA - 5 LPA", "5 LPA - 10 LPA", "Above 10 LPA"].map((range) => (
+          <div className="form-check" key={range}>
+            <input
+              className="form-check-input border-primary"
+              type="radio"
+              name="salaryRange"
+              id={range}
+              value={range}
+              checked={selectedSalary === range}
+              onChange={(e) => setSelectedSalary(e.target.value)}
+            />
+            <label className="form-check-label text-muted" htmlFor={range}>
+              {range}
+            </label>
+          </div>
+        ))}
       </div>
+
       <div className="text-center mt-5 d-flex flex-column gap-3 align-items-center">
-        <button className="btn text-light bg-blue w-75 fs-14">Apply Filters</button>
-        <button className="btn btn-light border w-75 fs-14">
+        <button onClick={handleApply} className="btn text-light bg-blue w-75 fs-14">
+          Apply Filters
+        </button>
+        <button onClick={handleReset} className="btn btn-light border w-75 fs-14">
           Reset Filters
         </button>
       </div>
     </div>
   );
 };
+
 
 export default JobFilters;

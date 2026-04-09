@@ -1,17 +1,26 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { JOBS_API } from "../utils/apis";
 import { setJobs, setLoading } from "../redux/jobSlice";
 
 const useJobs = () => {
   const dispatch = useDispatch();
+  const { searchedQuery, filters } = useSelector((store) => store.job);
 
   useEffect(() => {
     const fetchJobs = async () => {
       dispatch(setLoading(true));
       try {
-        const res = await axios.get(`${JOBS_API}/`, {
+        const queryParams = new URLSearchParams({
+          keyword: searchedQuery.keyword,
+          location: searchedQuery.location,
+          jobTypes: filters?.jobTypes?.join(",") || "",
+          experience: filters?.experience?.join(",") || "",
+          salary: filters?.salary || "",
+        }).toString();
+
+        const res = await axios.get(`${JOBS_API}/?${queryParams}`, {
           withCredentials: true,
         });
         if (res.data.success) {
@@ -25,7 +34,7 @@ const useJobs = () => {
     };
 
     fetchJobs();
-  }, [dispatch]);
+  }, [dispatch, searchedQuery, filters]);
 };
 
 export default useJobs;

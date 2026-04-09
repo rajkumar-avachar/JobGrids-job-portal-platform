@@ -19,9 +19,17 @@ const jobSchema = new mongoose.Schema(
       type: String,
       default: "Not Disclosed",
     },
+    salaryRange: {
+      type: String,
+      default: "",
+    },
     experience: {
       type: String,
       default: "0 years",
+    },
+    experienceLevel: {
+      type: String,
+      default: "",
     },
     jobType: {
       type: String,

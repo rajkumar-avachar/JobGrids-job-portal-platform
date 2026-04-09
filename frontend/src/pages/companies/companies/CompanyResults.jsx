@@ -3,7 +3,19 @@ import CompanyCard from "./CompanyCard";
 import { useSelector } from "react-redux";
 
 const CompanyResults = () => {
-  const { companies } = useSelector((store) => store.company);
+  const { companies, loading } = useSelector((store) => store.company);
+
+  if (loading) {
+    return (
+      <div className="my-5 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: "300px" }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="mt-2 text-muted">Searching for companies...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="my-5">
       <p className="text-muted">
@@ -15,6 +27,11 @@ const CompanyResults = () => {
             <CompanyCard company={company} />
           </div>
         ))}
+        {companies?.length === 0 && (
+          <div className="col-12 text-center py-5">
+            <h5 className="text-muted">No companies found matching your criteria.</h5>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,37 +1,20 @@
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 import SearchCompany from "./SearchCompany";
 import CompanyResults from "./CompanyResults";
 import useCompanies from "../../../hooks/useCompanies";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setSearchedQuery } from "../../../redux/companySlice";
 
 const CompaniesPage = () => {
+  const dispatch = useDispatch();
   useCompanies();
-  const { loading } = useSelector((store) => store.company);
 
   useEffect(() => {
     document.title = "Companies | JobGrids";
-  }, []);
+    // Reset search on mount
+    dispatch(setSearchedQuery({ keyword: "", location: "" }));
+  }, [dispatch]);
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          height: "90vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: "3rem", height: "3rem" }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="bg-light py-5">
       <div className="container">

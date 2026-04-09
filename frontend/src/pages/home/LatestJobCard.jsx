@@ -79,13 +79,13 @@ const LatestJobCard = ({ job }) => {
             <Wallet size={14} />
             &nbsp;
             <div className="mb-0">
-              {job.salary === "Not Disclosed" ? job.salary : `₹ ${job.salary}`}
+              {job.salary !== "Not Disclosed" ? job.salary : (job.salaryRange || "Not Disclosed")}
             </div>
           </div>
           <div className="text-muted d-flex align-items-center">
             <Briefcase size={14} />
             &nbsp;
-            <p className="mb-0">{job.experience}</p>
+            <p className="mb-0">{job.experience !== "0 years" ? job.experience : (job.experienceLevel || "Fresher")}</p>
           </div>
         </div>
         <div className="mt-auto pt-3 d-flex align-items-center gap-3 fs-12">

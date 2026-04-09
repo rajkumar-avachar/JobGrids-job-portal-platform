@@ -3,36 +3,20 @@ import SearchJobs from "./SearchJobs";
 import JobFilters from "./JobFilters";
 import JobResults from "./JobResults";
 import useJobs from "../../../hooks/useJobs";
-import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setSearchedQuery, resetFilters } from "../../../redux/jobSlice";
 
 const JobsPage = () => {
+  const dispatch = useDispatch();
   useJobs();
-  const { loading } = useSelector((store) => store.job);
 
   useEffect(() => {
     document.title = "Jobs | JobGrids";
-  }, []);
+    // Reset search and filters on mount/refresh
+    dispatch(setSearchedQuery({ keyword: "", location: "" }));
+    dispatch(resetFilters());
+  }, [dispatch]);
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          height: "90vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: "3rem", height: "3rem" }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="bg-light py-5">
       <div className="container">
