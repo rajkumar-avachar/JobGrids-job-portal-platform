@@ -4,14 +4,14 @@ import { setSearchedQuery } from "../../../redux/jobSlice";
 
 const SearchJobs = () => {
   const { searchedQuery } = useSelector((store) => store.job);
-  const [keyword, setKeyword] = useState(searchedQuery.keyword || "");
-  const [location, setLocation] = useState(searchedQuery.location || "");
+  const [keyword, setKeyword] = useState(searchedQuery?.keyword || "");
+  const [location, setLocation] = useState(searchedQuery?.location || "");
   const dispatch = useDispatch();
 
   // Sync state if Redux state changes externally (e.g. on reset)
   useEffect(() => {
-    setKeyword(searchedQuery.keyword);
-    setLocation(searchedQuery.location);
+    setKeyword(searchedQuery?.keyword || "");
+    setLocation(searchedQuery?.location || "");
   }, [searchedQuery]);
 
   const handleSearch = () => {
