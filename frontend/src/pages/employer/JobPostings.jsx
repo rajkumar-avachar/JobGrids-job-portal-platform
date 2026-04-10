@@ -1,4 +1,4 @@
-import React, { use, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { MapPin } from "lucide-react";
+import { MapPin, Search } from "lucide-react";
 import JobPostingActions from "./components/JobPostingActions";
 import useEmployerJobs from "../../hooks/useEmployerJobs";
 import { useSelector } from "react-redux";
@@ -14,6 +14,15 @@ import { useSelector } from "react-redux";
 const JobPostings = () => {
   useEmployerJobs();
   const { employerJobs, loading } = useSelector((store) => store.job);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredJobs = employerJobs?.filter((job) => {
+    const jobTitle = job.title?.toLowerCase() || "";
+    const jobLocation = job.location?.toLowerCase() || "";
+    const searchLow = searchTerm.toLowerCase();
+
+    return jobTitle.includes(searchLow) || jobLocation.includes(searchLow);
+  });
 
   useEffect(() => {
     document.title = "Job Postings | JobGrids";
@@ -46,8 +55,31 @@ const JobPostings = () => {
       <p className="text-muted">
         Manage your job listings and track applications
       </p>
+
+      <div className="d-flex bg-light my-5 gap-3 justify-content-between">
+        <div style={{ position: "relative" }} className="flex-grow-1">
+          <Search
+            size={18}
+            style={{
+              position: "absolute",
+              left: "12px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "#64748b",
+            }}
+          />
+          <input
+            type="text"
+            placeholder="Search by job title or location..."
+            className="form-control ps-5 fs-14 lh-lg"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
       <TableContainer component={Paper} className="border rounded-3 p-3 my-5">
-        <h6 className="fw-semibold">Jobs ({employerJobs?.length})</h6>
+        <h6 className="fw-semibold">Jobs ({filteredJobs?.length})</h6>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -75,7 +107,7 @@ const JobPostings = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {employerJobs?.map((job) => (
+            {filteredJobs?.map((job) => (
               <TableRow
                 key={job._id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
