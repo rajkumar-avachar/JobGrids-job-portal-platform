@@ -24,18 +24,8 @@ const Summary = () => {
   });
   const [recentJobs, setRecentJobs] = useState([]);
   const [recentApps, setRecentApps] = useState([]);
+  const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Mock data for the chart since we don't have historical data structure yet
-  const chartData = [
-    { name: "Mon", applications: 4 },
-    { name: "Tue", applications: 7 },
-    { name: "Wed", applications: 5 },
-    { name: "Thu", applications: 12 },
-    { name: "Fri", applications: 8 },
-    { name: "Sat", applications: 15 },
-    { name: "Sun", applications: parseInt(stats.totalApplications) || 10 },
-  ];
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -47,6 +37,7 @@ const Summary = () => {
           setStats(res.data.stats);
           setRecentJobs(res.data.recentJobs);
           setRecentApps(res.data.recentApplications);
+          setChartData(res.data.applicationStats || []);
         }
       } catch (error) {
         console.error("Failed to fetch dashboard stats", error);

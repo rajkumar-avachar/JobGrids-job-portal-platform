@@ -43,6 +43,45 @@ export const getDashboardStats = async (req, res) => {
       .limit(5)
       .populate("applicant", "fullname profile");
 
+    // Application distribution for the last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const applicationStats = await Application.aggregate([
+      {
+        $match: {
+          company: companyId,
+          createdAt: { $gte: sevenDaysAgo },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    // Format for frontend (ensure all 7 days are present)
+    const last7Days = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
+      const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+      
+      const found = applicationStats.find((s) => s._id === dateStr);
+      last7Days.unshift({
+        name: dayName,
+        applications: found ? found.count : 0,
+        fullDate: dateStr,
+      });
+    }
+
     return res.status(200).json({
       stats: {
         totalJobs,
@@ -52,6 +91,7 @@ export const getDashboardStats = async (req, res) => {
       },
       recentJobs,
       recentApplications,
+      applicationStats: last7Days,
       success: true,
     });
   } catch (error) {
