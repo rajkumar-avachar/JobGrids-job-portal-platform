@@ -11,13 +11,14 @@ import {
   CircleUserRound,
   Settings,
   TableRowsSplit,
+  Briefcase
 } from "lucide-react";
 import { USER_API } from "../../../utils/apis";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { logout } from "../../../redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -115,10 +116,23 @@ const UserActions = () => {
         className="w-100 border-0 rounded-3 employer-account bg-white"
       >
         <div className="d-flex align-items-center p-2">
-          <i className="bi bi-person-circle text-primary fs-2 me-2"></i>
-          <div className="text-start">
-            <p className="mb-0 fs-14 fw-medium">Raj Kumar</p>
-            <p className="text-muted fs-12 mb-0">HR Manager</p>
+          {user?.profile?.profilePhoto ? (
+            <img 
+              src={user.profile.profilePhoto} 
+              alt="avatar" 
+              width={36} 
+              height={36} 
+              className="rounded-circle object-fit-cover me-2" 
+            />
+          ) : (
+            <i className="bi bi-person-circle text-primary fs-2 me-2"></i>
+          )}
+          <div className="text-start overflow-hidden">
+            <p className="mb-0 fs-14 fw-medium text-truncate">{user?.fullname || "Employer"}</p>
+            <p className="text-muted fs-12 mb-0 text-truncate d-flex align-items-center gap-1">
+              <Briefcase size={12} className="text-primary" />
+              {user?.profile?.headline || (user?.role === 'employer' ? 'Hiring Manager' : user?.role)}
+            </p>
           </div>
         </div>
       </button>
@@ -145,7 +159,25 @@ const UserActions = () => {
           <CircleUserRound size={16} className="me-2" />
           {user?.email}
         </MenuItem>
-        <MenuItem disableRipple className="fs-14 rounded-3">
+        <MenuItem 
+          disableRipple 
+          className="fs-14 rounded-3"
+          onClick={() => {
+            handleClose();
+            navigate("/employer/profile");
+          }}
+        >
+          <CircleUserRound size={16} className="me-2" />
+          Profile
+        </MenuItem>
+        <MenuItem 
+          disableRipple 
+          className="fs-14 rounded-3"
+          onClick={() => {
+            handleClose();
+            navigate("/employer/settings");
+          }}
+        >
           <Settings size={16} className=" me-2" />
           Settings
         </MenuItem>

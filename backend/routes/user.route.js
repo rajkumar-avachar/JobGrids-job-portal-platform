@@ -10,6 +10,8 @@ import {
   sendOtpForForgotPassword,
   verifyOtpForResetPassword,
   resetPassword,
+  changeEmployerPassword,
+  deleteEmployerAccount,
 } from "../controllers/user.controller.js";
 import { isAuthenticated } from "../middlewares/authMiddleware.js";
 import { profileResumeUpload } from "../utils/upload.js";
@@ -41,9 +43,15 @@ router
   .route("/updateProfile")
   .put(isAuthenticated, profileResumeUpload, updateProfile);
 
+router.route("/change-employer-password").put(isAuthenticated, changeEmployerPassword);
+
+router.route("/delete-employer-account").delete(isAuthenticated, deleteEmployerAccount);
+
 router.get("/me", isAuthenticated, async (req, res) => {
   try {
-    const user = await User.findById(req.user.userId).select("-password");
+    const user = await User.findById(req.user.userId)
+      .select("-password")
+      .populate("company");
 
     return res.status(200).json({
       success: true,

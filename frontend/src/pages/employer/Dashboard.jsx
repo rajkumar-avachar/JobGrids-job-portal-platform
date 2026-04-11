@@ -13,6 +13,8 @@ import PageNotFound2 from "./components/PageNotFound2";
 import PostJob from "./PostJob";
 import JobDetails from "./components/JobDetails";
 import EditJob from "./components/EditJob";
+import Profile from "./Profile";
+import Settings from "./Settings";
 
 const Dashboard = () => {
   useEffect(() => {
@@ -36,6 +38,8 @@ const Dashboard = () => {
           <Route path="company/join" element={<JoinCompany />} />
           <Route path="company/profile" element={<CompanyProfile />} />
           <Route path="company/edit" element={<EditCompany />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="*" element={<PageNotFound2 />} />
         </Routes>
       </div>

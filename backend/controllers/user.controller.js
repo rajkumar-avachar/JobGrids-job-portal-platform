@@ -1,4 +1,7 @@
 import { User } from "../model/user.model.js";
+import { Company } from "../model/company.model.js";
+import { Job } from "../model/job.model.js";
+import { Application } from "../model/application.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
@@ -538,6 +541,121 @@ export const logout = async (req, res) => {
   }
 };
 
+// Change Password (Authenticated)
+export const changeEmployerPassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.userId;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        message: "All fields are required",
+        success: false,
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    // Check if current password is correct
+    const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({
+        message: "Incorrect current password",
+        success: false,
+      });
+    }
+
+    // Validate new password
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: "New password must be at least 6 characters long",
+        success: false,
+      });
+    }
+
+    if (currentPassword === newPassword) {
+      return res.status(400).json({
+        message: "New password cannot be the same as current password",
+        success: false,
+      });
+    }
+
+    // Hash and save new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password updated successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error("Change Password Error:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
+// Delete Account (Authenticated)
+export const deleteEmployerAccount = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    // If employer, delete associated company and jobs
+    if (user.role === "employer") {
+      const company = await Company.findOne({ employer: userId });
+      if (company) {
+        // Delete all jobs associated with the company
+        await Job.deleteMany({ company: company._id });
+        // Delete the company
+        await Company.findByIdAndDelete(company._id);
+      }
+    }
+
+    // Delete associated applications (as applicant)
+    await Application.deleteMany({ applicant: userId });
+
+    // Finally, delete the user
+    await User.findByIdAndDelete(userId);
+
+    return res
+      .status(200)
+      .cookie("token", "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        maxAge: 0,
+        path: "/",
+      })
+      .json({
+        message: "Account deleted successfully",
+        success: true,
+      });
+  } catch (error) {
+    console.error("Delete Account Error:", error);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
+  }
+};
+
 //Update Profile
 export const updateProfile = async (req, res) => {
   try {
@@ -701,7 +819,7 @@ export const updateProfile = async (req, res) => {
         new: true,
         runValidators: true,
       },
-    );
+    ).populate("company");
     if (!updatedUser) {
       return res.status(404).json({
         message: "User not found",
