@@ -42,6 +42,17 @@
   margin-top: -3rem;
 }
 
+/* Filter drawer styles */
+.filter-overlay {
+  z-index: 1060;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.filter-drawer {
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
 @media (max-width: 576px) {
   .profile-photo {
     width: 9rem;
