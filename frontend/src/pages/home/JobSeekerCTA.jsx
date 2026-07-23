@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 const JobSeekerCTA = () => {
+  const { user } = useSelector((store) => store.auth);
   return (
     <div
       className="text-center py-5 px-2 mt-5"
@@ -16,21 +18,25 @@ const JobSeekerCTA = () => {
         ITConnect.
       </p>
       <div className="d-flex justify-content-center gap-3 mt-5">
-        <Link to="/signup">
-          <button className="btn btn-light text-blue fw-medium py-2 px-4">
-            Create Account
-          </button>
-        </Link>
+        {user ? (
+          <Link to="/dashboard">
+            <button className="btn btn-light text-blue fw-medium py-2 px-4">
+              Go to Dashboard
+            </button>
+          </Link>
+        ) : (
+          <Link to="/signup">
+            <button className="btn btn-light text-blue fw-medium py-2 px-4">
+              Create Account
+            </button>
+          </Link>
+        )}
+
         <Link to="/jobs">
           <button className="btn bg-blue text-light border py-2 px-4 fw-medium">
             Browse Jobs
           </button>
         </Link>
-        {/* <Link to="/dashboard">
-          <button className="btn btn-light text-blue fw-medium py-2 px-4">
-            Go to Dashboard
-          </button>
-        </Link> */}
       </div>
     </div>
   );
