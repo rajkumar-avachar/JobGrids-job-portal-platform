@@ -35,7 +35,7 @@ const LatestJobCard = ({ job }) => {
       );
 
       if (res.data.success) {
-        toast.success(res.data.message);
+        toast.success(res.data.message , { autoClose: 1000, position: "bottom-right" });
         // After toggle, we need to refresh the savedJobs list. 
         // For simplicity, we'll manually update if it's already in the list or not.
         if (isSaved) {

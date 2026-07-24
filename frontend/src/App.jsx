@@ -34,6 +34,7 @@ import OtpVerificationForResetPassword from "./pages/auth/ResetPassword/OtpVerif
 import ResetPassword from "./pages/auth/ResetPassword/ResetPassword";
 import SavedJobs from "./pages/jobseeker/SavedJobs";
 import useSavedJobs from "./hooks/useSavedJobs";
+import PublicRoute from "./components/PublicRoute";
 
 // Layouts
 function MainLayout() {
@@ -49,11 +50,12 @@ function MainLayout() {
 // App
 function App() {
   const dispatch = useDispatch();
-  useSavedJobs();
+  // useSavedJobs();
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        dispatch(setLoading(true));
         const res = await axios.get(`${USER_API}/me`, {
           withCredentials: true,
         });
@@ -63,6 +65,8 @@ function App() {
         if (error.response?.status === 401) {
           dispatch(logout());
         }
+      } finally {
+        dispatch(setLoading(false));
       }
     };
     checkAuth();
@@ -81,15 +85,17 @@ function App() {
           <Route path="company/:id" element={<CompanyDetailsPage />} />
         </Route>
 
-        <Route path="signup" element={<Signup />} />
-        <Route path="otp-verification" element={<OtpVerification />} />
-        <Route path="login" element={<Login />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route
-          path="otp-verification-for-reset-password"
-          element={<OtpVerificationForResetPassword />}
-        />
-        <Route path="reset-password" element={<ResetPassword />} />
+        <Route element={<PublicRoute />}>
+          <Route path="signup" element={<Signup />} />
+          <Route path="login" element={<Login />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="otp-verification" element={<OtpVerification />} />
+          <Route
+            path="otp-verification-for-reset-password"
+            element={<OtpVerificationForResetPassword />}
+          />
+          <Route path="reset-password" element={<ResetPassword />} />
+        </Route>
 
         {/* Jobseeker Protected Routes */}
         <Route element={<ProtectedRoute allowedRoles={["jobseeker"]} />}>

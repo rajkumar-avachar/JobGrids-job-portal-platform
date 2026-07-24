@@ -47,7 +47,10 @@ const JobCard = ({ job }) => {
       );
 
       if (res.data.success) {
-        toast.success(res.data.message);
+        toast.success(res.data.message, {
+          autoClose: 1000,
+          position: "bottom-right",
+        });
         if (isSaved) {
           dispatch(
             setSavedJobs(savedJobs.filter((item) => item._id !== job._id))
