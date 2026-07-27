@@ -61,9 +61,10 @@ export const register = async (req, res) => {
       });
     }
 
-    if (cleaned.password.length < 6) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(cleaned.password)) {
       return res.status(400).json({
-        message: "Password must be at least 6 characters",
+        message: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
         success: false,
       });
     }
@@ -475,9 +476,10 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    if (newPassword.length < 6) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
       return res.status(400).json({
-        message: "Password must be at least 6 characters",
+        message: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
         success: false,
       });
     }
@@ -572,9 +574,10 @@ export const changeEmployerPassword = async (req, res) => {
     }
 
     // Validate new password
-    if (newPassword.length < 6) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
       return res.status(400).json({
-        message: "New password must be at least 6 characters long",
+        message: "New password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
         success: false,
       });
     }

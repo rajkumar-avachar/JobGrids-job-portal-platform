@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import useJobDetails from "../../../hooks/useJobDetails";
 import { SquarePen, Eye, MapPin, Briefcase } from "lucide-react";
+import Loader from "../../../components/Loader";
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -13,6 +14,10 @@ const JobDetails = () => {
   useEffect(() => {
     document.title = `${jobDetails?.title} | JobGrids`;
   }, [jobDetails]);
+
+  if (loading) {
+    return <Loader inline fullHeight text="Loading job details..." />;
+  }
 
   if (!jobDetails) {
     return (
@@ -44,28 +49,6 @@ const JobDetails = () => {
     applications,
     createdAt,
   } = jobDetails;
-
-
-  if (loading) {
-    return (
-      <div
-        style={{
-          height: "80vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: "3rem", height: "3rem" }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
   return (
     <div className="p-4 bg-light h-100">
       <div className="d-flex justify-content-between">

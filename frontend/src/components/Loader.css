@@ -1,0 +1,134 @@
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+}
+
+/* Inline mode — fits naturally inside content columns (e.g. Jobs/Companies pages) */
+.loader-container.inline {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  min-height: 400px;
+  background: transparent;
+  backdrop-filter: none;
+  z-index: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Full-height modifier — fills the employer dashboard content panel */
+.loader-container.inline.full-height {
+  min-height: 100vh;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-ring {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #2563eb 0%, #60a5fa 50%, #eff6ff 100%);
+  animation: rotate 1.5s linear infinite;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+}
+
+.spinner-inner {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+.loader-text-container {
+  margin-top: 24px;
+  text-align: center;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.loader-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.5px;
+}
+
+.text-primary-blue {
+  color: #2563eb;
+}
+
+.loader-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.loader-progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.loader-progress-dots span {
+  width: 8px;
+  height: 8px;
+  background-color: #2563eb;
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+.loader-progress-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loader-progress-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}

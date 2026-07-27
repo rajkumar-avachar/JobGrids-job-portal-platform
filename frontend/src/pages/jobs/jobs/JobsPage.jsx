@@ -3,12 +3,14 @@ import SearchJobs from "./SearchJobs";
 import JobFilters from "./JobFilters";
 import JobResults from "./JobResults";
 import useJobs from "../../../hooks/useJobs";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { setSearchedQuery, resetFilters } from "../../../redux/jobSlice";
 import { Filter, X } from "lucide-react";
+import Loader from "../../../components/Loader";
 
 const JobsPage = () => {
   const dispatch = useDispatch();
+  const { loading } = useSelector((store) => store.job);
   useJobs();
 
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -28,6 +30,11 @@ const JobsPage = () => {
       document.body.style.overflow = 'unset';
     }
   }, [showMobileFilters]);
+
+  if (loading) {
+    return <Loader />;
+  }
+
 
   return (
     <div className="bg-light py-5">

@@ -5,6 +5,7 @@ import AboutCompanyCard from "./AboutCompanyCard";
 import JobDescription from "./JobDescription";
 import useJobDetails from "../../../hooks/useJobDetails";
 import { useSelector } from "react-redux";
+import Loader from "../../../components/Loader";
 
 const JobDetailsPage = () => {
   const { id } = useParams();
@@ -18,24 +19,7 @@ const JobDetailsPage = () => {
   }, [jobDetails]);
 
   if (loading) {
-    return (
-      <div
-        style={{
-          height: "90vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: "3rem", height: "3rem" }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Loader inline text="Loading job details..." />;
   }
 
   return (

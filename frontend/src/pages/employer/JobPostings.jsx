@@ -10,6 +10,7 @@ import { MapPin, Search } from "lucide-react";
 import JobPostingActions from "./components/JobPostingActions";
 import useEmployerJobs from "../../hooks/useEmployerJobs";
 import { useSelector } from "react-redux";
+import Loader from "../../components/Loader";
 
 const JobPostings = () => {
   useEmployerJobs();
@@ -29,24 +30,7 @@ const JobPostings = () => {
   }, [employerJobs]);
 
   if (loading) {
-    return (
-      <div
-        style={{
-          height: "90vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: "3rem", height: "3rem" }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Loader inline fullHeight text="Loading job postings..." />;
   }
 
   return (

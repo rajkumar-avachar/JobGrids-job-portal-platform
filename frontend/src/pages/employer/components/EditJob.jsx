@@ -6,6 +6,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { setLoading } from "../../../redux/jobSlice";
 import { JOBS_API } from "../../../utils/apis";
+import Loader from "../../../components/Loader";
 
 const EditJob = () => {
   const navigate = useNavigate();
@@ -102,24 +103,7 @@ const EditJob = () => {
   };
 
   if (loading) {
-    return (
-      <div
-        style={{
-          height: "90vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: "3rem", height: "3rem" }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Loader inline fullHeight text="Loading job information..." />;
   }
 
   return (

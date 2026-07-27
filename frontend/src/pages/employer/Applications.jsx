@@ -22,6 +22,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { APPLICATION_API } from "../../utils/apis";
 import { toast } from "react-toastify";
+import Loader from "../../components/Loader";
 
 const Applications = () => {
   useApplications("employer");
@@ -122,24 +123,7 @@ const Applications = () => {
   };
 
   if (loading) {
-    return (
-      <div
-        style={{
-          height: "90vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: "3rem", height: "3rem" }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Loader inline fullHeight text="Loading applications..." />;
   }
   return (
     <div className="p-4 bg-light h-100">

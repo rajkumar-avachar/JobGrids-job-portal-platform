@@ -1,0 +1,65 @@
+.empty-state-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.empty-state-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background-color: #eff6ff;
+  border-radius: 50%;
+  animation: floatIcon 3s ease-in-out infinite;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);
+}
+
+.empty-state-icon {
+  animation: pulseIcon 3s ease-in-out infinite;
+}
+
+.empty-state-dot {
+  width: 16px;
+  height: 16px;
+  background-color: #2563eb;
+  border-radius: 50%;
+}
+
+.empty-state-desc {
+  line-height: 1.6;
+}
+
+.empty-state-btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.empty-state-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.2) !important;
+}
+
+@keyframes floatIcon {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pulseIcon {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}

@@ -16,6 +16,7 @@ import { COMPANY_API } from "../../utils/apis";
 import { setLoading } from "../../redux/companySlice";
 import { toast } from "react-toastify";
 import { setUser } from "../../redux/authSlice";
+import Loader from "../../components/Loader";
 
 const CompanyProfile = () => {
   const { user } = useSelector((store) => store.auth);
@@ -54,24 +55,7 @@ const CompanyProfile = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div
-        style={{
-          height: "80vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div
-          className="spinner-border text-primary"
-          role="status"
-          style={{ width: "3rem", height: "3rem" }}
-        >
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Loader inline fullHeight text="Loading company profile..." />;
   }
 
   if (!company) return null;

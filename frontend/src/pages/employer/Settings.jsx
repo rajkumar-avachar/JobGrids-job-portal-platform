@@ -12,6 +12,31 @@ const Settings = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const getPasswordStrength = (pwd) => {
+    if (!pwd) return { score: 0, label: "", color: "bg-secondary" };
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[a-z]/.test(pwd)) score++;
+    if (/\d/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+    let label = "Weak";
+    let color = "bg-danger";
+    if (score >= 5) {
+      label = "Very Strong";
+      color = "bg-success";
+    } else if (score >= 4) {
+      label = "Strong";
+      color = "bg-info";
+    } else if (score >= 3) {
+      label = "Medium";
+      color = "bg-warning";
+    }
+
+    return { score, label, color };
+  };
+
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -41,6 +66,10 @@ const Settings = () => {
     }
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       return toast.error("New passwords do not match");
+    }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(passwordData.newPassword)) {
+      return toast.error("Password must be at least 8 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
     }
     
     try {
@@ -137,6 +166,8 @@ const Settings = () => {
                         value={passwordData.newPassword}
                         onChange={handlePasswordChange}
                         placeholder="Enter new password"
+                        minLength={8}
+                        required
                       />
                       <button 
                         type="button"
@@ -146,6 +177,54 @@ const Settings = () => {
                         {showPasswords.new ? <EyeOff size={18} className="text-muted" /> : <Eye size={18} className="text-muted" />}
                       </button>
                     </div>
+
+                    {passwordData.newPassword && (
+                      <div className="mt-2 p-2 bg-light rounded border border-light">
+                        <div className="d-flex justify-content-between align-items-center mb-1">
+                          <span className="fs-11 text-muted fw-medium">Password strength:</span>
+                          <span className={`badge ${getPasswordStrength(passwordData.newPassword).color} fs-10`}>
+                            {getPasswordStrength(passwordData.newPassword).label}
+                          </span>
+                        </div>
+                        <div className="progress mb-2" style={{ height: "4px" }}>
+                          <div
+                            className={`progress-bar ${getPasswordStrength(passwordData.newPassword).color}`}
+                            role="progressbar"
+                            style={{
+                              width: `${(getPasswordStrength(passwordData.newPassword).score / 5) * 100}%`,
+                              transition: "width 0.3s ease",
+                            }}
+                          ></div>
+                        </div>
+                        <div className="row g-1 mt-1" style={{ fontSize: "10px" }}>
+                          <div className="col-6 d-flex align-items-center gap-1">
+                            <span className={passwordData.newPassword.length >= 8 ? "text-success fw-bold" : "text-muted"}>
+                              {passwordData.newPassword.length >= 8 ? "✓" : "○"} Min 8 chars
+                            </span>
+                          </div>
+                          <div className="col-6 d-flex align-items-center gap-1">
+                            <span className={/[A-Z]/.test(passwordData.newPassword) ? "text-success fw-bold" : "text-muted"}>
+                              {/[A-Z]/.test(passwordData.newPassword) ? "✓" : "○"} 1 Uppercase
+                            </span>
+                          </div>
+                          <div className="col-6 d-flex align-items-center gap-1">
+                            <span className={/[a-z]/.test(passwordData.newPassword) ? "text-success fw-bold" : "text-muted"}>
+                              {/[a-z]/.test(passwordData.newPassword) ? "✓" : "○"} 1 Lowercase
+                            </span>
+                          </div>
+                          <div className="col-6 d-flex align-items-center gap-1">
+                            <span className={/\d/.test(passwordData.newPassword) ? "text-success fw-bold" : "text-muted"}>
+                              {/\d/.test(passwordData.newPassword) ? "✓" : "○"} 1 Number
+                            </span>
+                          </div>
+                          <div className="col-12 d-flex align-items-center gap-1">
+                            <span className={/[^A-Za-z0-9]/.test(passwordData.newPassword) ? "text-success fw-bold" : "text-muted"}>
+                              {/[^A-Za-z0-9]/.test(passwordData.newPassword) ? "✓" : "○"} 1 Special character
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="col-12 col-md-6">
                     <label className="form-label fs-14 fw-semibold">Confirm New Password</label>
@@ -157,6 +236,8 @@ const Settings = () => {
                         value={passwordData.confirmPassword}
                         onChange={handlePasswordChange}
                         placeholder="Confirm new password"
+                        minLength={8}
+                        required
                       />
                       <button 
                         type="button"

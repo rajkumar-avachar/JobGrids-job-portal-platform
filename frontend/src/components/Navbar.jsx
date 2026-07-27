@@ -155,9 +155,7 @@ const Navbar = () => {
                 {user?.fullname}
               </p>
               <p className="fs-14 mb-2 text-black">{user?.profile?.headline}</p>
-              <p className="text-muted fs-14 mb-0">
-                {user?.profile?.location}
-              </p>
+              <p className="text-muted fs-14 mb-0">{user?.profile?.location}</p>
             </div>
           </Link>
         ) : (

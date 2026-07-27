@@ -3,6 +3,7 @@ import { Briefcase, Users, UserCheck, Activity } from "lucide-react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { COMPANY_API } from "../../utils/apis";
+import Loader from "../../components/Loader";
 import {
   AreaChart,
   Area,
@@ -50,13 +51,7 @@ const Summary = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center h-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Loader inline fullHeight text="Loading dashboard summary..." />;
   }
 
   return (

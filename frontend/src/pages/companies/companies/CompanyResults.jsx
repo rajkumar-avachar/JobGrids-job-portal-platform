@@ -1,38 +1,42 @@
 import React from "react";
 import CompanyCard from "./CompanyCard";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import EmptyState from "../../../components/EmptyState";
+import { Building } from "lucide-react";
+import { setSearchedQuery } from "../../../redux/companySlice";
 
 const CompanyResults = () => {
-  const { companies, loading } = useSelector((store) => store.company);
+  const dispatch = useDispatch();
+  const { companies } = useSelector((store) => store.company);
 
-  if (loading) {
-    return (
-      <div className="my-5 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: "300px" }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2 text-muted">Searching for companies...</p>
-      </div>
-    );
-  }
+  const handleReset = () => {
+    dispatch(setSearchedQuery({ keyword: "", location: "" }));
+  };
 
   return (
     <div className="my-5">
-      <p className="text-muted">
-        Found <b>{companies?.length}</b> companies
-      </p>
-      <div className="row row-cols-lg-3">
-        {companies?.map((company) => (
-          <div className="p-3" key={company._id}>
-            <CompanyCard company={company} />
+      {companies?.length > 0 ? (
+        <>
+          <p className="text-muted">
+            Found <b>{companies?.length}</b> companies
+          </p>
+          <div className="row row-cols-lg-3">
+            {companies.map((company) => (
+              <div className="p-3" key={company._id}>
+                <CompanyCard company={company} />
+              </div>
+            ))}
           </div>
-        ))}
-        {companies?.length === 0 && (
-          <div className="col-12 text-center py-5">
-            <h5 className="text-muted">No companies found matching your criteria.</h5>
-          </div>
-        )}
-      </div>
+        </>
+      ) : (
+        <EmptyState
+          icon={Building}
+          title="No companies found"
+          description="We couldn't find any registered companies matching your search. Try resetting your keywords or location parameters."
+          actionText="Reset Search"
+          onAction={handleReset}
+        />
+      )}
     </div>
   );
 };

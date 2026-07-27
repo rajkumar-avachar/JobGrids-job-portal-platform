@@ -15,6 +15,31 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const getPasswordStrength = (pwd) => {
+    if (!pwd) return { score: 0, label: "", color: "bg-secondary" };
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[a-z]/.test(pwd)) score++;
+    if (/\d/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+    let label = "Weak";
+    let color = "bg-danger";
+    if (score >= 5) {
+      label = "Very Strong";
+      color = "bg-success";
+    } else if (score >= 4) {
+      label = "Strong";
+      color = "bg-info";
+    } else if (score >= 3) {
+      label = "Medium";
+      color = "bg-warning";
+    }
+
+    return { score, label, color };
+  };
+
   const location = useLocation();
   const email = location.state?.email;
 
@@ -40,6 +65,14 @@ const ResetPassword = () => {
       toast.error("Passwords do not match", {
         position: "bottom-right",
         autoClose: 2000,
+      });
+      return;
+    }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      toast.error("Password must be at least 8 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character.", {
+        position: "bottom-right",
+        autoClose: 3000,
       });
       return;
     }
@@ -103,7 +136,7 @@ const ResetPassword = () => {
                     id="password"
                     name="password"
                     placeholder="••••••••"
-                    minLength={6}
+                    minLength={8}
                     required
                     onChange={handleNewPasswordChange}
                   />
@@ -115,6 +148,54 @@ const ResetPassword = () => {
                     {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                   </span>
                 </div>
+
+                {newPassword && (
+                  <div className="mt-2 p-2 bg-light rounded border border-light">
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <span className="fs-11 text-muted fw-medium">Password strength:</span>
+                      <span className={`badge ${getPasswordStrength(newPassword).color} fs-10`}>
+                        {getPasswordStrength(newPassword).label}
+                      </span>
+                    </div>
+                    <div className="progress mb-2" style={{ height: "4px" }}>
+                      <div
+                        className={`progress-bar ${getPasswordStrength(newPassword).color}`}
+                        role="progressbar"
+                        style={{
+                          width: `${(getPasswordStrength(newPassword).score / 5) * 100}%`,
+                          transition: "width 0.3s ease",
+                        }}
+                      ></div>
+                    </div>
+                    <div className="row g-1 mt-1" style={{ fontSize: "10px" }}>
+                      <div className="col-6 d-flex align-items-center gap-1">
+                        <span className={newPassword.length >= 8 ? "text-success fw-bold" : "text-muted"}>
+                          {newPassword.length >= 8 ? "✓" : "○"} Min 8 chars
+                        </span>
+                      </div>
+                      <div className="col-6 d-flex align-items-center gap-1">
+                        <span className={/[A-Z]/.test(newPassword) ? "text-success fw-bold" : "text-muted"}>
+                          {/[A-Z]/.test(newPassword) ? "✓" : "○"} 1 Uppercase
+                        </span>
+                      </div>
+                      <div className="col-6 d-flex align-items-center gap-1">
+                        <span className={/[a-z]/.test(newPassword) ? "text-success fw-bold" : "text-muted"}>
+                          {/[a-z]/.test(newPassword) ? "✓" : "○"} 1 Lowercase
+                        </span>
+                      </div>
+                      <div className="col-6 d-flex align-items-center gap-1">
+                        <span className={/\d/.test(newPassword) ? "text-success fw-bold" : "text-muted"}>
+                          {/\d/.test(newPassword) ? "✓" : "○"} 1 Number
+                        </span>
+                      </div>
+                      <div className="col-12 d-flex align-items-center gap-1">
+                        <span className={/[^A-Za-z0-9]/.test(newPassword) ? "text-success fw-bold" : "text-muted"}>
+                          {/[^A-Za-z0-9]/.test(newPassword) ? "✓" : "○"} 1 Special character
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="mb-3">
                 <label htmlFor="password" className="form-label mb-1 fs-14">
@@ -129,10 +210,10 @@ const ResetPassword = () => {
                   <input
                     type={showPassword ? "text" : "password"}
                     className="form-control ps-5 py-2"
-                    id="password"
-                    name="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
                     placeholder="••••••••"
-                    minLength={6}
+                    minLength={8}
                     required
                     onChange={handleConfirmPasswordChange}
                   />

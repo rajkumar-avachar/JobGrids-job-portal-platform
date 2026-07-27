@@ -25,6 +25,31 @@ const Signup = () => {
 
   const [role, setRole] = useState("jobseeker");
 
+  const getPasswordStrength = (pwd) => {
+    if (!pwd) return { score: 0, label: "", color: "bg-secondary" };
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[a-z]/.test(pwd)) score++;
+    if (/\d/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+    let label = "Weak";
+    let color = "bg-danger";
+    if (score >= 5) {
+      label = "Very Strong";
+      color = "bg-success";
+    } else if (score >= 4) {
+      label = "Strong";
+      color = "bg-info";
+    } else if (score >= 3) {
+      label = "Medium";
+      color = "bg-warning";
+    }
+
+    return { score, label, color };
+  };
+
   useEffect(() => {
     document.title = "Sign up | JobGrids";
   }, []);
@@ -44,6 +69,15 @@ const Signup = () => {
       toast.error("Passwords do not match", {
         position: "bottom-right",
         autoClose: 2000,
+      });
+      return;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!passwordRegex.test(input.password)) {
+      toast.error("Password does not meet strength requirements", {
+        position: "bottom-right",
+        autoClose: 3000,
       });
       return;
     }
@@ -172,7 +206,7 @@ const Signup = () => {
                     id="password"
                     name="password"
                     placeholder="••••••••"
-                    minLength={6}
+                    minLength={8}
                     required
                     onChange={handleInputChange}
                   />
@@ -184,6 +218,54 @@ const Signup = () => {
                     {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                   </span>
                 </div>
+
+                {input.password && (
+                  <div className="mt-2 p-2 bg-light rounded border border-light">
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <span className="fs-11 text-muted fw-medium">Password strength:</span>
+                      <span className={`badge ${getPasswordStrength(input.password).color} fs-10`}>
+                        {getPasswordStrength(input.password).label}
+                      </span>
+                    </div>
+                    <div className="progress mb-2" style={{ height: "4px" }}>
+                      <div
+                        className={`progress-bar ${getPasswordStrength(input.password).color}`}
+                        role="progressbar"
+                        style={{
+                          width: `${(getPasswordStrength(input.password).score / 5) * 100}%`,
+                          transition: "width 0.3s ease",
+                        }}
+                      ></div>
+                    </div>
+                    <div className="row g-1 mt-1" style={{ fontSize: "10px" }}>
+                      <div className="col-6 d-flex align-items-center gap-1">
+                        <span className={input.password.length >= 8 ? "text-success fw-bold" : "text-muted"}>
+                          {input.password.length >= 8 ? "✓" : "○"} Min 8 chars
+                        </span>
+                      </div>
+                      <div className="col-6 d-flex align-items-center gap-1">
+                        <span className={/[A-Z]/.test(input.password) ? "text-success fw-bold" : "text-muted"}>
+                          {/[A-Z]/.test(input.password) ? "✓" : "○"} 1 Uppercase
+                        </span>
+                      </div>
+                      <div className="col-6 d-flex align-items-center gap-1">
+                        <span className={/[a-z]/.test(input.password) ? "text-success fw-bold" : "text-muted"}>
+                          {/[a-z]/.test(input.password) ? "✓" : "○"} 1 Lowercase
+                        </span>
+                      </div>
+                      <div className="col-6 d-flex align-items-center gap-1">
+                        <span className={/\d/.test(input.password) ? "text-success fw-bold" : "text-muted"}>
+                          {/\d/.test(input.password) ? "✓" : "○"} 1 Number
+                        </span>
+                      </div>
+                      <div className="col-12 d-flex align-items-center gap-1">
+                        <span className={/[^A-Za-z0-9]/.test(input.password) ? "text-success fw-bold" : "text-muted"}>
+                          {/[^A-Za-z0-9]/.test(input.password) ? "✓" : "○"} 1 Special character
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="mb-3">
@@ -205,7 +287,7 @@ const Signup = () => {
                     id="confirmPassword"
                     name="confirmPassword"
                     placeholder="••••••••"
-                     minLength={6}
+                    minLength={8}
                     required
                     onChange={handleInputChange}
                   />

@@ -26,7 +26,7 @@ import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { USER_API } from "./utils/apis";
 import { useDispatch } from "react-redux";
-import { logout, setUser } from "./redux/authSlice";
+import { logout, setUser, setLoading } from "./redux/authSlice";
 import axios from "axios";
 import OtpVerification from "./pages/auth/OtpVerification";
 import ForgotPassword from "./pages/auth/ResetPassword/ForgotPassword";

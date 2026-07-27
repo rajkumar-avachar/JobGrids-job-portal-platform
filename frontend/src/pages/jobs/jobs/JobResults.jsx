@@ -1,37 +1,42 @@
 import React from "react";
 import LatestJobCard from "../../home/LatestJobCard";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import EmptyState from "../../../components/EmptyState";
+import { Briefcase } from "lucide-react";
+import { setSearchedQuery, resetFilters } from "../../../redux/jobSlice";
 
 const JobResults = () => {
-  const { jobs, loading } = useSelector((store) => store.job);
+  const dispatch = useDispatch();
+  const { jobs } = useSelector((store) => store.job);
 
-  if (loading) {
-    return (
-      <div className="col px-0 d-flex flex-column align-items-center justify-content-center" style={{ minHeight: "300px" }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-        <p className="mt-2 text-muted">Searching for jobs...</p>
-      </div>
-    );
-  }
+  const handleReset = () => {
+    dispatch(setSearchedQuery({ keyword: "", location: "" }));
+    dispatch(resetFilters());
+  };
 
   return (
     <div className="col px-0">
-      <p className="text-muted">
-        Found <b>{jobs?.length}</b> jobs
-        <hr />
-      </p>
-      <div className="row row-cols-lg-2 gy-4">
-        {jobs?.map((job) => (
-          <LatestJobCard job={job} key={job._id} />
-        ))}
-        {jobs?.length === 0 && (
-          <div className="col-12 text-center py-5">
-            <h5 className="text-muted">No jobs found matching your criteria.</h5>
+      {jobs?.length > 0 ? (
+        <>
+          <p className="text-muted">
+            Found <b>{jobs?.length}</b> jobs
+            <hr />
+          </p>
+          <div className="row row-cols-lg-2 gy-4">
+            {jobs.map((job) => (
+              <LatestJobCard job={job} key={job._id} />
+            ))}
           </div>
-        )}
-      </div>
+        </>
+      ) : (
+        <EmptyState
+          icon={Briefcase}
+          title="No jobs found"
+          description="We couldn't find any job postings matching your current criteria. Try adjusting your search query, clearing active filters, or checking back later."
+          actionText="Reset Search & Filters"
+          onAction={handleReset}
+        />
+      )}
     </div>
   );
 };
