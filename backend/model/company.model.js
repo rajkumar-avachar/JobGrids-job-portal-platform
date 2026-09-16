@@ -60,10 +60,16 @@ const companySchema = new mongoose.Schema(
         ref: "Job",
       },
     ],
+    socialLinks: {
+      linkedin: { type: String, default: "" },
+      facebook: { type: String, default: "" },
+      x: { type: String, default: "" },
+      instagram: { type: String, default: "" }
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const Company = mongoose.model("Company", companySchema);

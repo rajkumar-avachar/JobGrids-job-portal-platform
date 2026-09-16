@@ -31,8 +31,8 @@ const CompanyInfo = ({ company }) => {
           <CompanyJobs company={company} />
         )}
       </div>
-      <div className="col px-0">
-        <UpcomingEvents />
+      <div className="col">
+        {/* <UpcomingEvents /> */}
         <SocialMediaLinks />
       </div>
     </div>
